@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="f41e3abf-6384-4539-891f-9ed5c7123945" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.env_db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/SocialEvent.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/material_theme_project_new.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/auth/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/auth/api.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/auth/models.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/auth/schemas.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/auth/security.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/auth/send_email.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/auth/service.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/routers.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/users/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/users/endpoint/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/users/endpoint/api.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/users/models.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/users/routers.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/users/schemas.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/users/service.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/base/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/base/email.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/config/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/config/db_settings.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/config/make_db.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/config/models.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/config/settings.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6
+}</component>
+  <component name="ProjectId" id="2pTVPvK63xO3oMaBTKg0ap71eZc" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/oleksii/prog/SQLAlchemy&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/src" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/src/app/users/endpoint" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-python-sdk-6a3326d57233-c546a90a8094-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-242.24807.21" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="f41e3abf-6384-4539-891f-9ed5c7123945" name="Changes" comment="" />
+      <created>1732790031574</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1732790031574</updated>
+    </task>
+    <servers />
+  </component>
+</project>
