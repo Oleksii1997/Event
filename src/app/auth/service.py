@@ -1,6 +1,8 @@
 from select import select
+from typing import Dict
 
 from fastapi import BackgroundTasks
+from pydantic import EmailStr
 from sqlalchemy import select, or_, exists
 
 from src.config.db_settings import new_session
@@ -19,5 +21,11 @@ async def registration_user(new_user: UserCreateBase, task: BackgroundTasks) -> 
             return True
         else:
             await UserCRUD.created_user(new_user)
-            task.add_task(send_new_account_email)
+            context: dict[str, str | EmailStr] = {
+                "phone_number": new_user.phone_number,
+                "email": new_user.email,
+                "firstname": new_user.firstname,
+                "lastname": new_user.lastname
+            }
+            task.add_task(send_new_account_email, context)
             return False

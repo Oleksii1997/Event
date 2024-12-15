@@ -1,0 +1,9 @@
+.welcome{
+  display: flex;
+  justify-content: center;
+}
+
+.text-white {
+  color: red;
+  font-weight: 700;
+}
