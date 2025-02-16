@@ -20,7 +20,7 @@ class UserCRUD:
             session.add(user)
             await session.flush()
             await session.commit()
-            return user.id
+            return user
 
     @classmethod
     async def authenticate(cls, data:UserAuthBase) -> Optional[UserModel]:

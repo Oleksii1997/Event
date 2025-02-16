@@ -5,15 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f41e3abf-6384-4539-891f-9ed5c7123945" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/base/get_email_template.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/email_template/verify_account.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/static/css/verify_account.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/auth/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/auth/api.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/auth/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/auth/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/auth/schemas.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/auth/schemas.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/auth/security.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/auth/security.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/auth/send_email.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/auth/send_email.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/auth/service.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/auth/service.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/users/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/users/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/users/schemas.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/users/schemas.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/users/service.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/users/service.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/base/email.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/base/email.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/config/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/config/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/email_template/verify_account.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/email_template/verify_account.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

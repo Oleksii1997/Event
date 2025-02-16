@@ -6,5 +6,5 @@ def send_new_account_email(context):
     subject = f"Registration on the project website {PROJECT_NAME}"
     context["project_name"] = PROJECT_NAME
     template = verify_auth_template(context)
-    print(template)
+    #print(template)
     email.send_email(email_to=context["email"], subject=subject, html_template=template)

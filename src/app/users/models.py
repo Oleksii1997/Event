@@ -1,13 +1,15 @@
 import datetime
 from cgi import maxlen
 from email.policy import default
+from enum import unique
 
 from sqlalchemy import text, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from uuid import UUID, uuid4
 from typing import Annotated, Optional
 
 from src.config.models import Base
+
 
 """creating a new object type for some database fields"""
 str_64 = Annotated[str,64]
@@ -28,11 +30,16 @@ class UserModel(Base):
     phone_number: Mapped[str_16] = mapped_column(unique=True)
     password: Mapped[str_128]
     email: Mapped[str_64] = mapped_column(unique=True)
+    valid_email: Mapped[bool] = mapped_column(default=False)
     is_active: Mapped[bool] = mapped_column(default=True)
     is_staff: Mapped[bool] = mapped_column(default=False)
     is_superuser: Mapped[bool] = mapped_column(default=False)
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
+
+    verification: Mapped["VerificationModel"] = relationship(back_populates="user", uselist=False)
+
+
 
 class ProfileModel(Base):
     """Profile user model"""
