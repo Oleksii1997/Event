@@ -1,14 +1,11 @@
 from select import select
-from sqlalchemy import delete
-from typing import Dict
 
-from dns.e164 import query
 from fastapi import BackgroundTasks
 from pydantic import EmailStr
 from sqlalchemy import select, or_, exists
 
 from src.config.db_settings import new_session
-from src.app.users.schemas import UserCreateBase
+from src.app.users.schemas import NewUserBase
 from src.app.users.models import UserModel
 from src.app.users.service import UserCRUD
 from src.app.auth.send_email import send_new_account_email
@@ -16,7 +13,7 @@ from src.app.auth.schemas import VerificationBase, VerificationEmailBase
 from src.app.auth.models import VerificationModel
 from src.config.settings import SERVER_HOST
 
-async def registration_user(new_user: UserCreateBase, task: BackgroundTasks) -> bool:
+async def registration_user(new_user: NewUserBase, task: BackgroundTasks) -> bool:
     """Реєстрація користувача
 
         Перевіряємо чи існує користувач, якщо існує то повертаємо True
@@ -30,6 +27,7 @@ async def registration_user(new_user: UserCreateBase, task: BackgroundTasks) -> 
         if result.scalar() is not None:
             return True
         else:
+
             user = await UserCRUD.created_user(new_user)
             verify_id = await create_verification(VerificationBase(user_id = user.id))
             context: dict[str, str | EmailStr] = {

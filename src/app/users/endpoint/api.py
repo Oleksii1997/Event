@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter
 from fastapi.params import Depends
 
-from src.app.users.schemas import UserCreateBase, UserAuthBase
+from src.app.users.schemas import UserAuthBase
 from src.app.users.service import UserCRUD
 user_router = APIRouter()
 

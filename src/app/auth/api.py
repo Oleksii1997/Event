@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import BackgroundTasks
 from fastapi import APIRouter
 from fastapi.params import Depends
-from src.app.users.schemas import UserCreateBase
+from src.app.users.schemas import UserCreateBase, NewUserBase
 from src.app.auth.schemas import MsgBase
 from src.app.auth.service import registration_user
 from src.app.auth.schemas import VerificationEmailBase
@@ -11,16 +11,17 @@ from src.app.auth.service import verify_user_email
 auth_router = APIRouter()
 
 @auth_router.post("/registration", response_model=MsgBase)
-async def user_registration(user: Annotated[UserCreateBase, Depends()], task: BackgroundTasks):
+async def user_registration(user: UserCreateBase, task: BackgroundTasks):
     """Реєстрація нового користувача.
 
     P.S. e-mail та номер телефону є унікальними значеннями, тому користувачі з однаковими номерами телефону або адресами
     електронної пошти не можуть зареєструватися"""
-    result = await registration_user(user, task)
+    #user_dict: dict = user.model_dump()
+    result = await registration_user(NewUserBase(**user.model_dump()), task)
     if result:
         raise HTTPException(status_code=400, detail="User already exists")
     else:
-        return {"msg": "Email send"}
+        return {"msg": "User has been created"}
 
 @auth_router.get("/confirm-email", response_model=MsgBase)
 async def confirm_email(data: Annotated[VerificationEmailBase, Depends()]):

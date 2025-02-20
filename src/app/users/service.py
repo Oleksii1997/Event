@@ -1,9 +1,8 @@
-import uuid
 from typing import Optional
 
 from sqlalchemy import select
 
-from src.app.users.schemas import UserCreateBase, UserAuthBase
+from src.app.users.schemas import NewUserBase, UserAuthBase, UserCreateBase
 from src.config.db_settings import new_session
 from src.app.users.models import UserModel
 from src.app.auth.security import get_password_hash, verify_password
@@ -12,7 +11,7 @@ from src.app.auth.security import get_password_hash, verify_password
 class UserCRUD:
     """Сlass for working with the user profile and hash password"""
     @classmethod
-    async def created_user(cls, data: UserCreateBase):
+    async def created_user(cls, data: NewUserBase):
         async with new_session() as session:
             user_dict: dict = data.model_dump()
             user_dict["password"] = get_password_hash(user_dict["password"])
