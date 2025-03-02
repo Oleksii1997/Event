@@ -4,7 +4,7 @@ from fastapi import APIRouter
 from fastapi.params import Depends
 
 from src.app.users.schemas import UserAuthBase
-from src.app.users.service import UserCRUD
+from src.app.users.service import UserService
 user_router = APIRouter()
 
 """

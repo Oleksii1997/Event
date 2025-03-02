@@ -1,4 +1,6 @@
 from pydantic import BaseModel, EmailStr, field_validator
+from uuid import UUID
+from datetime import datetime
 
 
 class NewUserBase(BaseModel):
@@ -36,3 +38,4 @@ class UserAuthBase(BaseModel):
     """Модель для аутентифікації користувача"""
     phone_number: str
     password: str
+

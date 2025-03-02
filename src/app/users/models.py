@@ -1,9 +1,6 @@
 import datetime
-from cgi import maxlen
-from email.policy import default
-from enum import unique
-
-from sqlalchemy import text, ForeignKey
+from sqlalchemy import text, ForeignKey, DateTime
+from sqlalchemy.sql import func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from uuid import UUID, uuid4
 from typing import Annotated, Optional
@@ -16,9 +13,9 @@ str_64 = Annotated[str,64]
 str_48 = Annotated[str, 48]
 str_16 = Annotated[str, 16]
 str_128 = Annotated[str, 128]
-created_at = Annotated[datetime.datetime, mapped_column(server_default=text("TIMEZONE('UTC', now())"))]
-updated_at = Annotated[datetime.datetime, mapped_column(server_default=text("TIMEZONE('UTC', now())"),
-                                                        onupdate=datetime.datetime.now(datetime.UTC))]
+created_at = Annotated[datetime.datetime, mapped_column(DateTime(timezone=True), server_default=func.now())]
+updated_at = Annotated[datetime.datetime, mapped_column(DateTime(timezone=True), server_default=func.now(),
+                                                        onupdate=func.now())]
 
 class UserModel(Base):
     """User model"""
@@ -37,7 +34,7 @@ class UserModel(Base):
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
 
-    verification: Mapped["VerificationModel"] = relationship(back_populates="user", uselist=False)
+    #verification: Mapped["VerificationModel"] = relationship(back_populates="user", uselist=False, cascade="all, delete")
 
 
 

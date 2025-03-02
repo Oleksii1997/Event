@@ -1,12 +1,31 @@
 import os
+from pathlib import Path
+
 from dotenv import dotenv_values, load_dotenv
+from pydantic import BaseModel
+from pydantic_settings import BaseSettings
+
+from src.config.db_settings import settings
 
 """Include /env file"""
 load_dotenv()
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 PROJECT_NAME = "SocialEvent"
 
-API_V1_STR = "/api/v1"
+class AuthJWT(BaseModel):
+    """Schema for path JWT key"""
+    private_key_jwt_path: str = "src/app/certs/jwt-private.pem"
+    public_key_jwt_path: str = "src/app/certs/jwt-public.pem"
+    algorithm: str = "RS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 3
+
+class Settings(BaseSettings):
+    api_v1_prefix: str = "/api/v1"
+    auth_jwt: AuthJWT = AuthJWT()
+
+settings_class = Settings()
 
 """Database settings"""
 

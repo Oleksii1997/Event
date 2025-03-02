@@ -1,15 +1,18 @@
 from typing import Optional
+from uuid import UUID
+from fastapi import HTTPException
 
 from sqlalchemy import select
 
-from src.app.users.schemas import NewUserBase, UserAuthBase, UserCreateBase
+from src.app.users.schemas import NewUserBase, UserAuthBase
 from src.config.db_settings import new_session
 from src.app.users.models import UserModel
 from src.app.auth.security import get_password_hash, verify_password
 
 
-class UserCRUD:
+class UserService:
     """Сlass for working with the user profile and hash password"""
+
     @classmethod
     async def created_user(cls, data: NewUserBase):
         async with new_session() as session:
@@ -22,10 +25,29 @@ class UserCRUD:
             return user
 
     @classmethod
-    async def authenticate(cls, data:UserAuthBase) -> Optional[UserModel]:
+    async def authenticate(cls, phone_number: str, password: str) -> Optional[UserModel]:
+        """Аутенифікація та перевірка пароля користувача"""
         async with new_session() as session:
-            auth_dict: dict = data.model_dump()
-            query = select(UserModel).where(UserModel.phone_number == auth_dict["phone_number"])
+            query = select(UserModel).where(UserModel.phone_number == phone_number)
             result = await session.execute(query)
-            task_models = result.scalars().one_or_none()
-            return task_models
+            user = result.scalars().one_or_none()
+            if not user:
+                return None
+            if not verify_password(password, user.password):
+                return None
+            return user
+
+    @classmethod
+    async def check_valid_email(cls, user_id: UUID):
+        """Змінюємо статус валідності електронної адреси моделі користувача"""
+        async with new_session() as session:
+            query = select(UserModel).where(UserModel.id == user_id)
+            result = await session.execute(query)
+            user = result.scalars().one_or_none()
+            if user:
+                user.valid_email = True
+                #session.add(user)
+                await session.commit()
+            else:
+                raise HTTPException(status_code=400, detail="User not exists")
+

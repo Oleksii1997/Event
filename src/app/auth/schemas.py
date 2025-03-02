@@ -13,3 +13,8 @@ class VerificationBase(BaseModel):
 class VerificationEmailBase(BaseModel):
     """Схема для верифікації електронної пошти користувача"""
     link: UUID = Field(default_factory=uuid4)
+
+class AuthToken(BaseModel):
+    """ Схема для токена"""
+    access_token: str
+    token_type: str

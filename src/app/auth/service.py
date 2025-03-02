@@ -7,11 +7,12 @@ from sqlalchemy import select, or_, exists
 from src.config.db_settings import new_session
 from src.app.users.schemas import NewUserBase
 from src.app.users.models import UserModel
-from src.app.users.service import UserCRUD
+from src.app.users.service import UserService
 from src.app.auth.send_email import send_new_account_email
 from src.app.auth.schemas import VerificationBase, VerificationEmailBase
 from src.app.auth.models import VerificationModel
 from src.config.settings import SERVER_HOST
+from src.app.users.service import UserService
 
 async def registration_user(new_user: NewUserBase, task: BackgroundTasks) -> bool:
     """Реєстрація користувача
@@ -28,7 +29,7 @@ async def registration_user(new_user: NewUserBase, task: BackgroundTasks) -> boo
             return True
         else:
 
-            user = await UserCRUD.created_user(new_user)
+            user = await UserService.created_user(new_user)
             verify_id = await create_verification(VerificationBase(user_id = user.id))
             context: dict[str, str | EmailStr] = {
                 "phone_number": new_user.phone_number,
@@ -57,6 +58,7 @@ async def verify_user_email(data: VerificationEmailBase) -> bool:
         result = await session.execute(query)
         res = result.scalars().one_or_none()
         if res is not None:
+            await UserService.check_valid_email(res.user_id)
             await session.delete(res)
             await session.commit()
             return True
