@@ -39,3 +39,18 @@ class UserAuthBase(BaseModel):
     phone_number: str
     password: str
 
+class UserBase(BaseModel):
+    """Модель інформації про користувача"""
+    id: UUID
+    firstname: str
+    lastname: str
+    phone_number: str
+    email: EmailStr
+    valid_email: bool
+    is_active: bool
+    is_staff: bool
+    is_superuser: bool
+    created_at: datetime
+    updated_at: datetime
+
+

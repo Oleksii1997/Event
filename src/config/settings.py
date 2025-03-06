@@ -14,16 +14,23 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 PROJECT_NAME = "SocialEvent"
 
+
 class AuthJWT(BaseModel):
     """Schema for path JWT key"""
-    private_key_jwt_path: str = "src/app/certs/jwt-private.pem"
-    public_key_jwt_path: str = "src/app/certs/jwt-public.pem"
+
+    private_key_access_jwt_path: str = "src/app/certs/jwt-private.pem"
+    public_key_access_jwt_path: str = "src/app/certs/jwt-public.pem"
+    private_key_refresh_jwt_path: str = "src/app/certs/refresh-jwt-private.pem"
+    public_key_refresh_jwt_path: str = "src/app/certs/refresh-jwt-public.pem"
     algorithm: str = "RS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 3
+    REFRESH_TOKEN_EXPIRE_MINUTES: int = 10
+
 
 class Settings(BaseSettings):
     api_v1_prefix: str = "/api/v1"
     auth_jwt: AuthJWT = AuthJWT()
+
 
 settings_class = Settings()
 

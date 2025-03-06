@@ -13,6 +13,7 @@ str_64 = Annotated[str,64]
 str_48 = Annotated[str, 48]
 str_16 = Annotated[str, 16]
 str_128 = Annotated[str, 128]
+bytes_256 = Annotated[bytes, 256]
 created_at = Annotated[datetime.datetime, mapped_column(DateTime(timezone=True), server_default=func.now())]
 updated_at = Annotated[datetime.datetime, mapped_column(DateTime(timezone=True), server_default=func.now(),
                                                         onupdate=func.now())]
@@ -25,7 +26,7 @@ class UserModel(Base):
     firstname: Mapped[str_48]
     lastname: Mapped[str_48]
     phone_number: Mapped[str_16] = mapped_column(unique=True)
-    password: Mapped[str_128]
+    password: Mapped[bytes_256]
     email: Mapped[str_64] = mapped_column(unique=True)
     valid_email: Mapped[bool] = mapped_column(default=False)
     is_active: Mapped[bool] = mapped_column(default=True)

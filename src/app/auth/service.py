@@ -13,6 +13,7 @@ from src.app.auth.schemas import VerificationBase, VerificationEmailBase
 from src.app.auth.models import VerificationModel
 from src.config.settings import SERVER_HOST
 from src.app.users.service import UserService
+from src.app.auth.jwt import decode_jwt_token
 
 async def registration_user(new_user: NewUserBase, task: BackgroundTasks) -> bool:
     """Реєстрація користувача
@@ -64,3 +65,4 @@ async def verify_user_email(data: VerificationEmailBase) -> bool:
             return True
         else:
             return False
+
