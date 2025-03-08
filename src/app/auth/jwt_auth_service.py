@@ -11,7 +11,7 @@ from src.app.auth.jwt import decode_jwt_token
 from src.config.settings import settings_class
 
 oauth2_scheme = OAuth2PasswordBearer(
-    tokenUrl="/api/v1/login/access-token",
+    tokenUrl="/api/v1/auth/login",
 )
 
 
@@ -33,7 +33,7 @@ async def get_payload_access_token(access_token: str = Depends(oauth2_scheme)) -
 
 
 async def get_payload_refresh_token(
-    refresh_token: str = Depends(oauth2_scheme),
+    refresh_token: str,
 ) -> dict:
     """Розшифровуємо refresh токен та отримуємо payload"""
 

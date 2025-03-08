@@ -24,5 +24,5 @@ class AuthToken(BaseModel):
     """Схема для токена"""
 
     access_token: str
-    refresh_token: str = None
-    token_type: str
+    refresh_token: str | None = None
+    token_type: str = "Bearer"
