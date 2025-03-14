@@ -1,11 +1,10 @@
 from fastapi.security import OAuth2PasswordBearer
-from jwt.exceptions import InvalidTokenError
 from fastapi import (
     HTTPException,
     status,
 )
 from fastapi.params import Depends
-
+from jwt.exceptions import InvalidTokenError
 
 from src.app.auth.jwt import decode_jwt_token
 from src.config.settings import settings_class
@@ -35,7 +34,8 @@ async def get_payload_access_token(access_token: str = Depends(oauth2_scheme)) -
 async def get_payload_refresh_token(
     refresh_token: str,
 ) -> dict:
-    """Розшифровуємо refresh токен та отримуємо payload"""
+    """Розшифровуємо refresh токен та отримуємо payload. Повертаємо значення payload та додаємо до відповіді значення
+    refresh token"""
 
     try:
         payload = await decode_jwt_token(
@@ -43,6 +43,7 @@ async def get_payload_refresh_token(
             public_key_path=settings_class.auth_jwt.public_key_refresh_jwt_path,
             algorithm=settings_class.auth_jwt.algorithm,
         )
+        payload["refresh_token"] = refresh_token
     except InvalidTokenError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

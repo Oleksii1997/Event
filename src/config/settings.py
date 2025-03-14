@@ -1,11 +1,8 @@
 import os
-from pathlib import Path
-
-from dotenv import dotenv_values, load_dotenv
+from dotenv import load_dotenv
 from pydantic import BaseModel
 from pydantic_settings import BaseSettings
 
-from src.config.db_settings import settings
 
 """Include /env file"""
 load_dotenv()
@@ -22,9 +19,16 @@ class AuthJWT(BaseModel):
     public_key_access_jwt_path: str = "src/app/certs/jwt-public.pem"
     private_key_refresh_jwt_path: str = "src/app/certs/refresh-jwt-private.pem"
     public_key_refresh_jwt_path: str = "src/app/certs/refresh-jwt-public.pem"
+    private_key_recovery_password_path: str = (
+        "src/app/certs/recovery-password-jwt-private.pem"
+    )
+    public_key_recovery_password_path: str = (
+        "src/app/certs/recovery-password-jwt-public.pem"
+    )
     algorithm: str = "RS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 3
-    REFRESH_TOKEN_EXPIRE_MINUTES: int = 10
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 20
+    REFRESH_TOKEN_EXPIRE_MINUTES: int = 60
+    RECOVERY_PASSWORD_TOKEN_EXPIRE_MINUTES: int = 60
 
 
 class Settings(BaseSettings):

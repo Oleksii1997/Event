@@ -2,14 +2,13 @@ from fastapi import HTTPException, status
 from fastapi.params import Depends
 from uuid import UUID
 
-from watchfiles import awatch
 
 from src.app.auth.jwt_auth_service import (
     get_payload_access_token,
     get_payload_refresh_token,
 )
-from src.app.users.schemas import UserBase
 from src.app.users.service.user_service import UserService
+from src.app.users.schemas import UserBase
 
 
 async def _get_current_auth_user(payload: dict) -> UserBase:

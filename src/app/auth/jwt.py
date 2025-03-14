@@ -35,7 +35,6 @@ async def decode_jwt_token(
         public_key,
         algorithms=[algorithm],
     )
-    print(f"DECODE: {decoded}")
     return decoded
 
 

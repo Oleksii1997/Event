@@ -2,13 +2,12 @@ from fastapi import APIRouter
 from fastapi.params import Depends
 from fastapi.security import HTTPBearer
 
-from src.app.users.schemas import UserBase
-
 from src.app.users.service.jwt_user_service import (
     get_current_active_auth_user_from_access,
 )
-
 from src.app.auth.jwt_auth_service import get_payload_access_token
+
+from src.app.users.schemas import UserBase
 
 
 http_bearer = HTTPBearer(auto_error=False)

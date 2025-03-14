@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 from uuid import UUID, uuid4
 
 
@@ -15,7 +15,7 @@ class VerificationBase(BaseModel):
 
 
 class VerificationEmailBase(BaseModel):
-    """Схема для верифікації електронної пошти користувача"""
+    """Схема для UUID при верифікації електронної пошти користувача"""
 
     link: UUID = Field(default_factory=uuid4)
 
@@ -24,5 +24,5 @@ class AuthToken(BaseModel):
     """Схема для токена"""
 
     access_token: str
-    refresh_token: str | None = None
+    refresh_token: str | None
     token_type: str = "Bearer"

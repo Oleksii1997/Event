@@ -5,19 +5,21 @@ from pydantic import EmailStr
 from sqlalchemy import select, or_
 
 from src.config.db_settings import new_session
-from src.app.users.schemas import NewUserBase
-from src.app.users.models import UserModel
-from src.app.auth.send_email import send_new_account_email
-from src.app.auth.schemas import VerificationBase, VerificationEmailBase
-from src.app.auth.models import VerificationModel
 from src.config.settings import SERVER_HOST
 from src.app.users.service.user_service import UserService
+from src.app.auth.send_email import send_new_account_email, send_recovery_password_email
+
+from src.app.users.schemas import NewUserBase, UserBase
+from src.app.auth.schemas import VerificationBase, VerificationEmailBase
+
+from src.app.users.models import UserModel
+from src.app.auth.models import VerificationModel
 
 
 async def registration_user(new_user: NewUserBase, task: BackgroundTasks) -> bool:
     """Реєстрація користувача
 
-    Перевіряємо чи існує користувач, якщо існує то повертаємо True
+    Перевіряємо чи існує користувач, якщо існує, то повертаємо True
     Якщо користувача не існує, то створюємо його та створюємо запис для верифікації користувача,
     відправляємо електронного листа для верифікації реєстрації
     """
@@ -44,6 +46,20 @@ async def registration_user(new_user: NewUserBase, task: BackgroundTasks) -> boo
             }
             task.add_task(send_new_account_email, context)
             return False
+
+
+async def recovery_password_mail(
+    user: UserBase, recovery_password_token: str, task: BackgroundTasks
+):
+    """Генеруємо контекст повідомлення, по відновленню пароля та надсилаємо листа"""
+    context: dict[str, str | EmailStr] = {
+        "email": user.email,
+        "firstname": user.firstname,
+        "lastname": user.lastname,
+        "link": f"{SERVER_HOST}/api/v1/reset-password?token={recovery_password_token}",
+    }
+    task.add_task(send_recovery_password_email, context)
+    return
 
 
 async def create_verification(data: VerificationBase):
