@@ -1,11 +1,11 @@
 from fastapi import HTTPException
 from typing import Optional
 from uuid import UUID
-from sqlalchemy import select
+from sqlalchemy import select, update, delete
 
 from src.config.db_settings import new_session
 from src.app.auth.security import get_password_hash, verify_password
-from src.app.users.schemas import NewUserBase, UserBase
+from src.app.users.schemas import NewUserBase, UserBase, UpdateUserBase
 from src.app.users.models import UserModel
 
 
@@ -22,6 +22,36 @@ class UserService:
             await session.flush()
             await session.commit()
             return user
+
+    @classmethod
+    async def update_user(cls, user: UserBase, data: UpdateUserBase) -> UserBase:
+        """Оновлюємо деякі поля моделі користувача"""
+        async with new_session() as session:
+            stmt = (
+                update(UserModel)
+                .values(
+                    firstname=data.firstname,
+                    lastname=data.lastname,
+                    phone_number=data.phone_number,
+                    email=data.email,
+                )
+                .where(UserModel.id == user.id)
+                .returning(UserModel)
+            )
+            result = await session.execute(stmt)
+            await session.commit()
+            user = result.scalars().one()
+            return UserBase.model_validate(user.__dict__)
+
+    @classmethod
+    async def delete_user(cls, user: UserBase) -> UserBase:
+        """Видаляємо користувача, повертаємо значення видаленого профілю"""
+        async with new_session() as session:
+            stmt = delete(UserModel).where(UserModel.id == user.id).returning(UserModel)
+        result = await session.execute(stmt)
+        await session.commit()
+        user = result.scalars().one()
+        return UserBase.model_validate(user.__dict__)
 
     @classmethod
     async def authenticate(
