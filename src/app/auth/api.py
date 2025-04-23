@@ -2,6 +2,7 @@ from fastapi import BackgroundTasks, HTTPException, APIRouter, status
 from fastapi.params import Depends
 from fastapi.security import HTTPBearer, OAuth2PasswordRequestForm
 from typing import Annotated
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 from src.config.settings import settings_class
@@ -27,7 +28,13 @@ from src.app.users.schemas import (
     UserBase,
     RecoveryPasswordBase,
 )
-from src.app.auth.schemas import MsgBase, AuthToken, VerificationEmailBase
+from src.app.auth.schemas import (
+    MsgBase,
+    CreateUserResponseBase,
+    AuthToken,
+    VerificationEmailBase,
+)
+from src.config.db_settings import get_session
 
 
 http_bearer = HTTPBearer(auto_error=False)
@@ -38,18 +45,22 @@ auth_router = APIRouter(
 )
 
 
-@auth_router.post("/registration", response_model=MsgBase)
-async def user_registration(user: UserCreateBase, task: BackgroundTasks):
+@auth_router.post("/registration", response_model=CreateUserResponseBase)
+async def user_registration(
+    user: UserCreateBase,
+    task: BackgroundTasks,
+    session: AsyncSession = Depends(get_session),
+) -> CreateUserResponseBase | HTTPException:
     """Реєстрація нового користувача.
 
     P.S. e-mail та номер телефону є унікальними значеннями, тому користувачі з однаковими номерами телефону або адресами
     електронної пошти не можуть зареєструватися"""
     # user_dict: dict = user.model_dump()
-    result = await registration_user(NewUserBase(**user.model_dump()), task)
-    if result:
+    result = await registration_user(NewUserBase(**user.model_dump()), session, task)
+    if result is None:
         raise HTTPException(status_code=400, detail="User already exists")
     else:
-        return MsgBase(msg="User has been created")
+        return CreateUserResponseBase(msg="User has been created", **result.__dict__)
 
 
 @auth_router.get("/confirm-email", response_model=MsgBase)

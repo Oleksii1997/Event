@@ -2,6 +2,7 @@ from fastapi import HTTPException
 from typing import Optional
 from uuid import UUID
 from sqlalchemy import select, update, delete
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.config.db_settings import new_session
 from src.app.auth.security import get_password_hash, verify_password
@@ -13,15 +14,19 @@ class UserService:
     """Клас для роботи з профілем користувача під час реєстрації, аутентифікації та відновлення пароля"""
 
     @classmethod
-    async def created_user(cls, data: NewUserBase):
-        async with new_session() as session:
-            user_dict: dict = data.model_dump()
-            user_dict["password"] = get_password_hash(user_dict["password"])
-            user = UserModel(**user_dict)
-            session.add(user)
-            await session.flush()
-            await session.commit()
-            return user
+    async def created_user(
+        cls,
+        data: NewUserBase,
+        session: AsyncSession,
+    ) -> UserBase:
+
+        user_dict: dict = data.model_dump()
+        user_dict["password"] = get_password_hash(user_dict["password"])
+        user = UserModel(**user_dict)
+        session.add(user)
+        await session.flush()
+        await session.commit()
+        return UserBase(**user.__dict__)
 
     @classmethod
     async def update_user(cls, user: UserBase, data: UpdateUserBase) -> UserBase:

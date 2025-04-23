@@ -11,6 +11,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 PROJECT_NAME = "SocialEvent"
 
+base_url = "http://127.0.0.1:8000"
+
 
 class AuthJWT(BaseModel):
     """Schema for path JWT key"""

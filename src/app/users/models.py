@@ -56,3 +56,13 @@ class ProfileModel(Base):
     user_id: Mapped[UUID] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"))
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
+
+
+'''
+class AvatarModel(Base):
+    """Модель зображення профелю"""
+
+    __tablename__ = "avatar"
+    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
+    created_at: Mapped[created_at]
+'''
