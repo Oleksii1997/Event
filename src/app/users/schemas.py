@@ -101,3 +101,12 @@ class UserBase(BaseModel):
     is_superuser: bool
     created_at: datetime
     updated_at: datetime
+
+
+class UpdateUserBase(BaseModel):
+    """Модель оновлення даних користувача"""
+
+    firstname: str
+    lastname: str
+    phone_number: str
+    email: EmailStr

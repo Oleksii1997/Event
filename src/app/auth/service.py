@@ -1,10 +1,12 @@
 from select import select
 
-from fastapi import BackgroundTasks
+from fastapi import BackgroundTasks, Depends
 from pydantic import EmailStr
 from sqlalchemy import select, or_
+from typing import Annotated
 
 from src.config.db_settings import new_session
+
 from src.config.settings import SERVER_HOST
 from src.app.users.service.user_service import UserService
 from src.app.auth.send_email import send_new_account_email, send_recovery_password_email
@@ -15,37 +17,43 @@ from src.app.auth.schemas import VerificationBase, VerificationEmailBase
 from src.app.users.models import UserModel
 from src.app.auth.models import VerificationModel
 
+from sqlalchemy.ext.asyncio import AsyncSession
 
-async def registration_user(new_user: NewUserBase, task: BackgroundTasks) -> bool:
+
+async def registration_user(
+    new_user: NewUserBase,
+    session: AsyncSession,
+    task: BackgroundTasks,
+) -> UserBase | None:
     """Реєстрація користувача
 
     Перевіряємо чи існує користувач, якщо існує, то повертаємо True
     Якщо користувача не існує, то створюємо його та створюємо запис для верифікації користувача,
     відправляємо електронного листа для верифікації реєстрації
     """
-    async with new_session() as session:
-        query = select(UserModel).where(
-            or_(
-                UserModel.phone_number == new_user.phone_number,
-                UserModel.email == new_user.email,
-            )
+    query = select(UserModel).where(
+        or_(
+            UserModel.phone_number == new_user.phone_number,
+            UserModel.email == new_user.email,
         )
-        result = await session.execute(query)
-        if result.scalar() is not None:
-            return True
-        else:
-
-            user = await UserService.created_user(new_user)
-            verify_id = await create_verification(VerificationBase(user_id=user.id))
-            context: dict[str, str | EmailStr] = {
-                "phone_number": new_user.phone_number,
-                "email": new_user.email,
-                "firstname": new_user.firstname,
-                "lastname": new_user.lastname,
-                "link": f"{SERVER_HOST}/api/v1/confirm-email?link={verify_id}",
-            }
-            task.add_task(send_new_account_email, context)
-            return False
+    )
+    result = await session.execute(query)
+    if result.scalar() is not None:
+        return None
+    else:
+        user: UserBase = await UserService.created_user(data=new_user, session=session)
+        verify_id = await create_verification(
+            data=VerificationBase(user_id=user.id), session=session
+        )
+        context: dict[str, str | EmailStr] = {
+            "phone_number": new_user.phone_number,
+            "email": new_user.email,
+            "firstname": new_user.firstname,
+            "lastname": new_user.lastname,
+            "link": f"{SERVER_HOST}/api/v1/confirm-email?link={verify_id}",
+        }
+        task.add_task(send_new_account_email, context)
+        return user
 
 
 async def recovery_password_mail(
@@ -62,15 +70,17 @@ async def recovery_password_mail(
     return
 
 
-async def create_verification(data: VerificationBase):
+async def create_verification(
+    data: VerificationBase,
+    session: AsyncSession,
+):
     """Створення запису в моделі верифікації"""
-    async with new_session() as session:
-        verification_dict: dict = data.model_dump()
-        verify = VerificationModel(**verification_dict)
-        session.add(verify)
-        await session.flush()
-        await session.commit()
-        return verify.link
+    verification_dict: dict = data.model_dump()
+    verify = VerificationModel(**verification_dict)
+    session.add(verify)
+    await session.flush()
+    await session.commit()
+    return verify.link
 
 
 async def verify_user_email(data: VerificationEmailBase) -> bool:

@@ -23,3 +23,9 @@ async_engine = create_async_engine(
 )
 
 new_session = async_sessionmaker(async_engine, expire_on_commit=False)
+
+
+async def get_session():
+    """Сесія для підключення до БД"""
+    async with new_session() as session:
+        yield session

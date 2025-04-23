@@ -1,11 +1,12 @@
 from fastapi import HTTPException
 from typing import Optional
 from uuid import UUID
-from sqlalchemy import select
+from sqlalchemy import select, update, delete
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.config.db_settings import new_session
 from src.app.auth.security import get_password_hash, verify_password
-from src.app.users.schemas import NewUserBase, UserBase
+from src.app.users.schemas import NewUserBase, UserBase, UpdateUserBase
 from src.app.users.models import UserModel
 
 
@@ -13,15 +14,49 @@ class UserService:
     """Клас для роботи з профілем користувача під час реєстрації, аутентифікації та відновлення пароля"""
 
     @classmethod
-    async def created_user(cls, data: NewUserBase):
+    async def created_user(
+        cls,
+        data: NewUserBase,
+        session: AsyncSession,
+    ) -> UserBase:
+
+        user_dict: dict = data.model_dump()
+        user_dict["password"] = get_password_hash(user_dict["password"])
+        user = UserModel(**user_dict)
+        session.add(user)
+        await session.flush()
+        await session.commit()
+        return UserBase(**user.__dict__)
+
+    @classmethod
+    async def update_user(cls, user: UserBase, data: UpdateUserBase) -> UserBase:
+        """Оновлюємо деякі поля моделі користувача"""
         async with new_session() as session:
-            user_dict: dict = data.model_dump()
-            user_dict["password"] = get_password_hash(user_dict["password"])
-            user = UserModel(**user_dict)
-            session.add(user)
-            await session.flush()
+            stmt = (
+                update(UserModel)
+                .values(
+                    firstname=data.firstname,
+                    lastname=data.lastname,
+                    phone_number=data.phone_number,
+                    email=data.email,
+                )
+                .where(UserModel.id == user.id)
+                .returning(UserModel)
+            )
+            result = await session.execute(stmt)
             await session.commit()
-            return user
+            user = result.scalars().one()
+            return UserBase.model_validate(user.__dict__)
+
+    @classmethod
+    async def delete_user(cls, user: UserBase) -> UserBase:
+        """Видаляємо користувача, повертаємо значення видаленого профілю"""
+        async with new_session() as session:
+            stmt = delete(UserModel).where(UserModel.id == user.id).returning(UserModel)
+        result = await session.execute(stmt)
+        await session.commit()
+        user = result.scalars().one()
+        return UserBase.model_validate(user.__dict__)
 
     @classmethod
     async def authenticate(

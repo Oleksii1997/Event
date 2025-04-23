@@ -1,11 +1,11 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from contextlib import asynccontextmanager
 from sqladmin import Admin
 
 from src.app import routers
 from src.config import settings
 from src.config.make_db import create_tables, delete_tables
-from src.config.db_settings import async_engine
+from src.config.db_settings import async_engine, new_session
 from src.app.users.admin import UserModelAdmin, ProfileModelAdmin
 from src.app.auth.admin import VerificationModelAdmin
 
