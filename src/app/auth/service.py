@@ -67,7 +67,6 @@ async def recovery_password_mail(
         "link": f"{SERVER_HOST}/api/v1/reset-password?token={recovery_password_token}",
     }
     task.add_task(send_recovery_password_email, context)
-    return
 
 
 async def create_verification(
@@ -83,16 +82,15 @@ async def create_verification(
     return verify.link
 
 
-async def verify_user_email(data: VerificationEmailBase) -> bool:
+async def verify_user_email(data: VerificationEmailBase, session: AsyncSession) -> bool:
     """Підтвердження верифікації електронної пошти користувача"""
-    async with new_session() as session:
-        query = select(VerificationModel).where(VerificationModel.link == data.link)
-        result = await session.execute(query)
-        res = result.scalars().one_or_none()
-        if res is not None:
-            await UserService.check_valid_email(res.user_id)
-            await session.delete(res)
-            await session.commit()
-            return True
-        else:
-            return False
+    query = select(VerificationModel).where(VerificationModel.link == data.link)
+    result = await session.execute(query)
+    res = result.scalars().one_or_none()
+    if res is not None:
+        await UserService.check_valid_email(user_id=res.user_id, session=session)
+        await session.delete(res)
+        await session.commit()
+        return True
+    else:
+        return False

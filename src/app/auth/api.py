@@ -64,9 +64,12 @@ async def user_registration(
 
 
 @auth_router.get("/confirm-email", response_model=MsgBase)
-async def confirm_email(data: Annotated[VerificationEmailBase, Depends()]):
+async def confirm_email(
+    data: Annotated[VerificationEmailBase, Depends()],
+    session: AsyncSession = Depends(get_session),
+):
     """Верифікація електронної пошти користувача. Для верифікації надішліть uuid запису про верифікацію"""
-    if await verify_user_email(data):
+    if await verify_user_email(data=data, session=session):
         return MsgBase(msg="Success verify email")
     else:
         raise HTTPException(
@@ -77,12 +80,13 @@ async def confirm_email(data: Annotated[VerificationEmailBase, Depends()]):
 @auth_router.post("/login/", response_model=AuthToken)
 async def login_access_refresh_jwt(
     form_data: OAuth2PasswordRequestForm = Depends(),
+    session: AsyncSession = Depends(get_session),
 ) -> AuthToken:
-    """Логінимося та отримуємо токен.
+    """Логінимося та отримуємо access токен.
     В формі OAuth2PasswordRequestForm обов'язковими полями входу є username та password. В даному проекті замість
     username ми будемо використовувати номер телефону, поле phone_number!"""
     user = await UserService.authenticate(
-        phone_number=form_data.username, password=form_data.password
+        phone_number=form_data.username, password=form_data.password, session=session
     )
     if not user:
         raise HTTPException(
@@ -123,13 +127,17 @@ async def refresh_jwt(
 
 
 @auth_router.post("/recovery-password/{email}", response_model=MsgBase)
-async def recovery_password(email: str, task: BackgroundTasks):
+async def recovery_password(
+    email: str, task: BackgroundTasks, session: AsyncSession = Depends(get_session)
+):
     """Відновлення пароля.
     Перевіряємо чи користувач з введеною адресою існує зареєстрований. Якщо існує, і електронна пошта підтверджена,
     генеруємо токен для відновлення пароля та надсилаємо лінк на вказану в профілі електронну пошту. Якщо електронна
     пошта не підтверджена, то просимо підтвердити
     """
-    user: UserBase | None = await UserService.get_user_by_email(email=email)
+    user: UserBase | None = await UserService.get_user_by_email(
+        email=email, session=session
+    )
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -162,10 +170,13 @@ async def recovery_password(email: str, task: BackgroundTasks):
 async def reset_password(
     password: RecoveryPasswordBase,
     payload_reset_password_token: dict = Depends(get_payload_reset_password_token),
+    session: AsyncSession = Depends(get_session),
 ):
     """Відновлення пароля"""
     result = await UserService.recovery_password(
-        user_id=payload_reset_password_token["user_id"], password=password.new_password
+        user_id=payload_reset_password_token["user_id"],
+        password=password.new_password,
+        session=session,
     )
     if not result:
         raise HTTPException(
