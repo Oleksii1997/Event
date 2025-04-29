@@ -3,8 +3,9 @@ from typing import Optional
 from uuid import UUID
 from sqlalchemy import select, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi.params import Depends
 
-from src.config.db_settings import new_session
+from src.config.db_settings import new_session, get_session
 from src.app.auth.security import get_password_hash, verify_password
 from src.app.users.schemas import NewUserBase, UserBase, UpdateUserBase
 from src.app.users.models import UserModel
@@ -60,64 +61,63 @@ class UserService:
 
     @classmethod
     async def authenticate(
-        cls, phone_number: str, password: str
+        cls, phone_number: str, password: str, session: AsyncSession
     ) -> Optional[UserModel]:
         """Аутенифікація та перевірка пароля користувача"""
-        async with new_session() as session:
-            query = select(UserModel).where(UserModel.phone_number == phone_number)
-            result = await session.execute(query)
-            user = result.scalars().one_or_none()
-            if not user:
-                return None
-            if not verify_password(password, user.password):
-                return None
-            return user
+        query = select(UserModel).where(UserModel.phone_number == phone_number)
+        result = await session.execute(query)
+        user = result.scalars().one_or_none()
+        if not user:
+            return None
+        if not verify_password(password, user.password):
+            return None
+        return user
 
     @classmethod
-    async def check_valid_email(cls, user_id: UUID):
+    async def check_valid_email(cls, user_id: UUID, session: AsyncSession):
         """Змінюємо статус валідності електронної адреси моделі користувача"""
-        async with new_session() as session:
-            query = select(UserModel).where(UserModel.id == user_id)
-            result = await session.execute(query)
-            user = result.scalars().one_or_none()
-            if user:
-                user.valid_email = True
-                await session.commit()
-            else:
-                raise HTTPException(status_code=400, detail="User not exists")
+        query = select(UserModel).where(UserModel.id == user_id)
+        result = await session.execute(query)
+        user = result.scalars().one_or_none()
+        if user:
+            user.valid_email = True
+            await session.commit()
+        else:
+            raise HTTPException(status_code=400, detail="User not exists")
 
     @classmethod
-    async def get_user(cls, user_id: UUID) -> UserBase | None:
+    async def get_user(cls, user_id: UUID, session: AsyncSession) -> UserBase | None:
         """Отримуємо користувача"""
-        async with new_session() as session:
-            query = select(UserModel).where(UserModel.id == user_id)
-            result = await session.execute(query)
-            user = result.scalars().one_or_none()
-            if user is not None:
-                user = UserBase.model_validate(user.__dict__)
-            return user
+        query = select(UserModel).where(UserModel.id == user_id)
+        result = await session.execute(query)
+        user = result.scalars().one_or_none()
+        if user is not None:
+            user = UserBase.model_validate(user.__dict__)
+        return user
 
     @classmethod
-    async def get_user_by_email(cls, email: str) -> UserBase | None:
+    async def get_user_by_email(
+        cls, email: str, session: AsyncSession
+    ) -> UserBase | None:
         """Отримуємо користувача"""
-        async with new_session() as session:
-            query = select(UserModel).where(UserModel.email == email)
-            result = await session.execute(query)
-            user = result.scalars().one_or_none()
-            if user is not None:
-                user = UserBase.model_validate(user.__dict__)
-            return user
+        query = select(UserModel).where(UserModel.email == email)
+        result = await session.execute(query)
+        user = result.scalars().one_or_none()
+        if user is not None:
+            user = UserBase.model_validate(user.__dict__)
+        return user
 
     @classmethod
-    async def recovery_password(cls, user_id: UUID, password: str) -> bool:
+    async def recovery_password(
+        cls, user_id: UUID, password: str, session: AsyncSession
+    ) -> bool:
         """Отримуємо користувача та змінюємо пароль. Повертаємо True якщо пароль змінено і False якщо
         користувача не існує"""
-        async with new_session() as session:
-            query = select(UserModel).where(UserModel.id == user_id)
-            result = await session.execute(query)
-            user = result.scalars().one_or_none()
-            if user is not None:
-                user.password = get_password_hash(password)
-                await session.commit()
-                return True
-            return False
+        query = select(UserModel).where(UserModel.id == user_id)
+        result = await session.execute(query)
+        user = result.scalars().one_or_none()
+        if user is not None:
+            user.password = get_password_hash(password)
+            await session.commit()
+            return True
+        return False
