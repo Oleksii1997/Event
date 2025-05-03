@@ -26,6 +26,13 @@ TEST_USER_MODEL_DB = {
     "is_superuser": False,
 }
 
+TEST_ME_UPDATE = {
+    "firstname": "Firstname_update",
+    "lastname": "Lastname_update",
+    "phone_number": "0787777777",
+    "email": "photoforkop@gmail.com",
+}
+
 TEST_USER_MODEL_DB_NO_CONFIRM_MAIL = {
     "user_id": "2dd210e8-bbe5-46e5-a2f1-5c96dbba1fe5",
     "firstname": "TestFirstname_confirm_mail",
