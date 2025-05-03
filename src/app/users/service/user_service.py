@@ -3,12 +3,16 @@ from typing import Optional
 from uuid import UUID
 from sqlalchemy import select, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi.params import Depends
+from pydantic import EmailStr
+from fastapi import BackgroundTasks
 
-from src.config.db_settings import new_session, get_session
+from src.config.settings import SERVER_HOST
+from src.config.db_settings import new_session
 from src.app.auth.security import get_password_hash, verify_password
+from src.app.auth.schemas import VerificationBase
 from src.app.users.schemas import NewUserBase, UserBase, UpdateUserBase
 from src.app.users.models import UserModel
+from src.app.auth.send_email import send_update_account_email
 
 
 class UserService:
@@ -30,9 +34,19 @@ class UserService:
         return UserBase(**user.__dict__)
 
     @classmethod
-    async def update_user(cls, user: UserBase, data: UpdateUserBase) -> UserBase:
-        """Оновлюємо деякі поля моделі користувача"""
-        async with new_session() as session:
+    async def update_user(
+        cls,
+        user: UserBase,
+        data: UpdateUserBase,
+        session: AsyncSession,
+        task: BackgroundTasks,
+    ) -> UserBase:
+        """Оновлюємо деякі поля моделі користувача
+        Якщо користувач змінює електронну пошту, то ми повинні змінити статус верифікації електронної адреси та змісити
+        користувача пройти підтвердження електронної пошти ще раз"""
+        from src.app.auth.service import create_verification
+
+        if user.email == data.email:
             stmt = (
                 update(UserModel)
                 .values(
@@ -47,13 +61,40 @@ class UserService:
             result = await session.execute(stmt)
             await session.commit()
             user = result.scalars().one()
-            return UserBase.model_validate(user.__dict__)
+        else:
+            stmt = (
+                update(UserModel)
+                .values(
+                    firstname=data.firstname,
+                    lastname=data.lastname,
+                    phone_number=data.phone_number,
+                    email=data.email,
+                    valid_email=False,
+                )
+                .where(UserModel.id == user.id)
+                .returning(UserModel)
+            )
+            result = await session.execute(stmt)
+            await session.commit()
+            user = result.scalars().one()
+            verify_id = await create_verification(
+                data=VerificationBase(user_id=user.id), session=session
+            )
+            context: dict[str, str | EmailStr] = {
+                "phone_number": user.phone_number,
+                "email": user.email,
+                "firstname": user.firstname,
+                "lastname": user.lastname,
+                "link": f"{SERVER_HOST}/api/v1/confirm-email?link={verify_id}",
+            }
+            task.add_task(send_update_account_email, context)
+        return UserBase.model_validate(user.__dict__)
 
     @classmethod
-    async def delete_user(cls, user: UserBase) -> UserBase:
+    async def delete_user(cls, user: UserBase, session: AsyncSession) -> UserBase:
         """Видаляємо користувача, повертаємо значення видаленого профілю"""
-        async with new_session() as session:
-            stmt = delete(UserModel).where(UserModel.id == user.id).returning(UserModel)
+
+        stmt = delete(UserModel).where(UserModel.id == user.id).returning(UserModel)
         result = await session.execute(stmt)
         await session.commit()
         user = result.scalars().one()

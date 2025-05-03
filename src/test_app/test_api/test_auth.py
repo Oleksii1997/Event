@@ -229,3 +229,5 @@ async def test_reset_password(client, override_session):
     )
     assert response_user_not_exist.status_code == 403
     assert (response_user_not_exist.json())["detail"] == "User does not exist"
+
+    app.dependency_overrides.clear()

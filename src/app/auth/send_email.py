@@ -10,6 +10,16 @@ def send_new_account_email(context: dict):
     email.send_email(email_to=context["email"], subject=subject, html_template=template)
 
 
+def send_update_account_email(context: dict):
+    """Лист надсилається якщо користувач під час оновлення особистих даних змінив електронну адресу"""
+    subject = f"Update email on the project website {PROJECT_NAME}"
+    context["project_name"] = PROJECT_NAME
+    template = get_email_template(
+        context=context, template_name="update_account_email.html"
+    )
+    email.send_email(email_to=context["email"], subject=subject, html_template=template)
+
+
 def send_recovery_password_email(context: dict):
     subject = f"Recovery password on the project website {PROJECT_NAME}"
     context["project_name"] = PROJECT_NAME

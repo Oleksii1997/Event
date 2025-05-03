@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ua">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>{{project_name}}</title>
+        <link rel="stylesheet" type="text/css" href="src/static/css/verify_account.css">
+    </head>
+
+    <body>
+        <div class="welcome">
+            <p class="text-white">
+                {{lastname|capitalize}} {{firstname|capitalize}} Ви змінили електронну адресу на порталі {{project_name}}!<br>
+                <br>
+                Для підтвердження нової електронної адреси перейдіть за посиланням: <br>{{link}}
+            </p>
+        </div>
+    </body>
+</html>
