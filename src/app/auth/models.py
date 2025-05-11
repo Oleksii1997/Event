@@ -22,9 +22,11 @@ updated_at = Annotated[
 class VerificationModel(Base):
     """Модель верифікації користувача через e-mail під час реєстрації"""
 
-    __tablename__ = "verification"
+    __tablename__ = "verification_table"
     link: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
-    user_id: Mapped[UUID] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"))
+    user_id: Mapped[UUID] = mapped_column(
+        ForeignKey("user_table.id", ondelete="CASCADE")
+    )
     created_at: Mapped[created_at]
 
     # user: Mapped["UserModel"] = relationship(back_populates="verification", lazy="selectin", uselist=False)
