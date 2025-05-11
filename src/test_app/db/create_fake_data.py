@@ -24,7 +24,7 @@ async def create_fake_user(conn: AsyncConnection):
         get_password_hash(password=TEST_USER_MODEL_DB_NO_CONFIRM_MAIL["password"])
     )[1:]
     query = (
-        f'INSERT INTO "user" '
+        f'INSERT INTO "user_table" '
         f"(id, firstname, lastname, phone_number, password, email, valid_email, is_active, is_staff, is_superuser) "
         f"VALUES "
         f"('{TEST_USER_MODEL_DB["user_id"]}', '{TEST_USER_MODEL_DB["firstname"]}', '{TEST_USER_MODEL_DB["lastname"]}', '{TEST_USER_MODEL_DB["phone_number"]}', "
@@ -47,7 +47,7 @@ async def create_fake_user(conn: AsyncConnection):
 async def create_fake_verification_email(conn: AsyncConnection):
     """Запис в таблицю верифікації електронної пошти (verification) даних для тестування"""
     query = (
-        f'INSERT INTO "verification" '
+        f'INSERT INTO "verification_table" '
         f"(link, user_id) "
         f"VALUES "
         f"('{TEST_VERIFICATION_MODEL_DB["link"]}', '{TEST_VERIFICATION_MODEL_DB["user_id"]}')"

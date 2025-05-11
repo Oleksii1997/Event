@@ -5,6 +5,9 @@ from sqladmin import Admin
 from src.app import routers
 from src.config import settings
 from src.config.make_db import create_tables, delete_tables
+from src.app.users.models import UserModel
+
+from src.app.location.models import CityModel, RegionModel, AreaModel
 from src.config.db_settings import async_engine, new_session
 from src.app.users.admin import UserModelAdmin, ProfileModelAdmin
 from src.app.auth.admin import VerificationModelAdmin
