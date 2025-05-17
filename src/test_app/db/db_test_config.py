@@ -6,14 +6,17 @@ class SettingsTest(BaseSettings):
     """Дані тестової БД"""
 
     DB_TEST_HOST: str
-    DB_TEST_PORT: int
-    DB_TEST_USER: str
-    DB_TEST_PASS: str
-    DB_TEST_NAME: str
+
+    POSTGRES_USER: str
+    POSTGRES_PASSWORD: str
+    POSTGRES_DB: str
+    POSTGRES_HOST: str
+    POSTGRES_PORT: int | str
 
     @property
     def database_test_url_asyncpg(self):
-        return f"postgresql+asyncpg://{self.DB_TEST_USER}:{self.DB_TEST_PASS}@{self.DB_TEST_HOST}:{self.DB_TEST_PORT}/{self.DB_TEST_NAME}"
+        # return f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.DB_TEST_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
+        return f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
 
     model_config = SettingsConfigDict(env_file=".env_test_db")
 

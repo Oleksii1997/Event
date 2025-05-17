@@ -10,8 +10,10 @@ load_dotenv()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 PROJECT_NAME = "SocialEvent"
-
-base_url = "http://127.0.0.1:8000"
+# local
+# base_url = "http://127.0.0.1:8000"
+# in docker
+base_url = "http://0.0.0.0:8000"
 
 
 class AuthJWT(BaseModel):

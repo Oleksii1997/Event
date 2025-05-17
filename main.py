@@ -12,7 +12,7 @@ from src.config.db_settings import async_engine, new_session
 from src.app.users.admin import UserModelAdmin, ProfileModelAdmin
 from src.app.auth.admin import VerificationModelAdmin
 
-
+"""
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await delete_tables()
@@ -21,7 +21,7 @@ async def lifespan(app: FastAPI):
     print("DB ready")
     yield
     print("OFF")
-
+"""
 
 app = FastAPI(
     title="SocialEvent",
@@ -29,7 +29,7 @@ app = FastAPI(
     "організації заходів різних напрямків (починаючи від волонтерських ініціатив до розважальних заходів), "
     "та заходів різного масштабу і формату проведення (від концертів до пошуку напарника для гри в настольний теніс)",
     version="0.0.1",
-    lifespan=lifespan,
+    #    lifespan=lifespan,
 )
 
 admin = Admin(app, async_engine)
