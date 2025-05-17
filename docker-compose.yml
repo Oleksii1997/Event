@@ -1,0 +1,53 @@
+services:
+  backend:
+    container_name: event-back
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    env_file:
+      - ./.env
+    command: uvicorn main:app --reload --port 10000 --host 0.0.0.0
+    volumes:
+      - ./:/usr/app
+    ports:
+      - "8000:10000"
+    depends_on:
+      - db
+      - pgadmin
+    restart: always
+
+  db:
+    container_name: event-postgres
+    image: postgres:17.5-bookworm
+    restart: always
+    volumes:
+      - db_postgres_data:/var/lib/postgresql/data/
+    expose:
+      - 5433
+    ports:
+      - "5434:5433"
+    environment:
+      PGPORT: '5433'
+      POSTGRES_DB: social_db
+      POSTGRES_USER: Oleksii
+      POSTGRES_PASSWORD: 1!dsdsD904
+
+
+  pgadmin:
+    container_name: pgadmin4_container
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: biz.django@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: Jou9FlsL2@c7
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+
+volumes:
+  db_postgres_data:
+  pgadmin-data:
+
