@@ -172,7 +172,7 @@ async def reset_password(
     payload_reset_password_token: dict = Depends(get_payload_reset_password_token),
     session: AsyncSession = Depends(get_session),
 ):
-    """Відновлення пароля"""
+    """Зміна пароля"""
     result = await UserService.recovery_password(
         user_id=payload_reset_password_token["user_id"],
         password=password.new_password,

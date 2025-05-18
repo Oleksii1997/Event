@@ -4,10 +4,9 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
 class Settings(BaseSettings):
     DB_HOST: str
-
+    POSTGRES_DB: str
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
-    POSTGRES_DB: str
     POSTGRES_HOST: str
     POSTGRES_PORT: int | str
 
