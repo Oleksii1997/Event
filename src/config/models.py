@@ -27,4 +27,9 @@ updated_at = Annotated[
 
 
 class Base(AsyncAttrs, DeclarativeBase):
-    pass
+
+    def __repr__(self):
+        cols = []
+        for col in self.__table__.columns.keys():
+            cols.append(f"{col}={getattr(self, col)}")
+        return f"<{self.__class__.__name__} {','.join(cols)}>"
