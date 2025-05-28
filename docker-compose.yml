@@ -50,7 +50,7 @@ services:
       POSTGRES_PASSWORD: 1!dsdsD90490dfd
 
   pgadmin:
-    container_name: pgadmin4_container
+    container_name: pgadmin4_event
     image: dpage/pgadmin4
     restart: always
     environment:

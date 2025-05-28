@@ -1,5 +1,5 @@
 from alembic.operations.toimpl import drop_table
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, Index
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing import List
 from typing import Optional
@@ -62,7 +62,7 @@ class CityModel(Base):
 
     __tablename__ = "city_table"
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[Optional[str_32]] = mapped_column(nullable=True)
+    city_name: Mapped[Optional[str_32]] = mapped_column(nullable=True)
     community_id: Mapped[int] = mapped_column(
         ForeignKey("community_table.id", ondelete="CASCADE")
     )
@@ -70,3 +70,5 @@ class CityModel(Base):
         back_populates="community_city"
     )
     city_profile: Mapped["ProfileModel"] = relationship(back_populates="profile_city")
+
+    __table_args__ = (Index("city_name_index", "city_name"),)
