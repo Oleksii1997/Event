@@ -68,7 +68,7 @@ async def city_in_community(
 
 
 @location_router.get(
-    "city/search/{search_field}", response_model=list[CityCommunityRegionAreaBase]
+    "/city/search/{search_field}", response_model=list[CityCommunityRegionAreaBase]
 )
 async def city_search(
     search_field: str, session: AsyncSession = Depends(get_session)

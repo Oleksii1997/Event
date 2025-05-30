@@ -8,7 +8,7 @@ from httpx import ASGITransport, AsyncClient
 from src.config.models import Base
 from main import app
 from src.config.db_settings import get_session
-from src.test_app.db.create_fake_data import fake_data_db
+from src.test_app.db.create_fake_data.create_fake_data import fake_data_db
 from src.test_app.db.db_test_config import SettingsTest
 
 

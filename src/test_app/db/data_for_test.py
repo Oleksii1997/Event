@@ -76,3 +76,107 @@ JWT_TEST_DATA = {
     "REFRESH_TOKEN_EXPIRE_MINUTES": 20,
     "RECOVERY_PASSWORD_TOKEN_EXPIRE_MINUTES": 60,
 }
+
+AREA_TEST_DATA = [
+    {"id": 18, "area_name": "Сумська область"},
+    {"id": 11, "area_name": "Київська область"},
+]
+
+TEST_AREA_ID = 18  # id області районів які є тестовими даними
+TEST_REGION_ID = 1392  # id району громади якої представлені у тестових даних
+TEST_COMMUNITY_ID = (
+    4579  # id громади населені пункти якої представлені у тестових даних
+)
+TEST_FAKE_ID = 181  # хибне значення id для перевірки випадків коли передаються дані за якими немає зв'язаних об'єктів
+REGION_TEST_DATA = [
+    {"id": 1390, "region_name": "Роменський район", "area_id": 18},
+    {"id": 1389, "region_name": "Охтирський район", "area_id": 18},
+    {"id": 1391, "region_name": "Сумський район", "area_id": 18},
+    {"id": 1392, "region_name": "Шосткинський район", "area_id": 18},
+    {"id": 1388, "region_name": "Конотопський район", "area_id": 18},
+]
+
+COMMUNITY_TEST_DATA = [
+    {"id": 4569, "community_name": "Свеська територіальна громада", "region_id": 1392},
+    {
+        "id": 4543,
+        "community_name": "Глухівська територіальна громада",
+        "region_id": 1392,
+    },
+    {
+        "id": 4545,
+        "community_name": "Дружбівська територіальна громада",
+        "region_id": 1392,
+    },
+    {
+        "id": 4547,
+        "community_name": "Есманьська територіальна громада",
+        "region_id": 1392,
+    },
+    {
+        "id": 4579,
+        "community_name": "Шалигинська територіальна громада",
+        "region_id": 1392,
+    },
+    {
+        "id": 4580,
+        "community_name": "Шосткинська територіальна громада",
+        "region_id": 1392,
+    },
+    {
+        "id": 4534,
+        "community_name": "Березівська територіальна громада",
+        "region_id": 1392,
+    },
+    {
+        "id": 4570,
+        "community_name": "Середино-Будська територіальна громада",
+        "region_id": 1392,
+    },
+    {
+        "id": 4582,
+        "community_name": "Ямпільська територіальна громада",
+        "region_id": 1392,
+    },
+    {
+        "id": 4548,
+        "community_name": "Зноб-Новгородська територіальна громада",
+        "region_id": 1392,
+    },
+]
+
+TEST_SEARCH_STRING_1 = "сел"  # приклад пошукового запиту №1
+LEN_TEST_SEARCH_1 = 10  # довжина списку результату запиту який повинен бути при виконанні пошукового запиту №1
+TEST_SEARCH_STRING_2 = "черне"  # приклад пошукового запиту №2
+RESULT_SEARCH_2 = [
+    {
+        "id": 6638,
+        "city_name": "село Черневе",
+        "community_id": 4579,
+        "city_community": {
+            "id": 4579,
+            "community_name": "Шалигинська територіальна громада",
+            "region_id": 1392,
+            "community_region": {
+                "id": 1392,
+                "region_name": "Шосткинський район",
+                "area_id": 18,
+                "region_area": {"id": 18, "area_name": "Сумська область"},
+            },
+        },
+    }
+]
+LEN_TEST_SEARCH_2 = 1  # довжина списку результату запиту який повинен бути при виконанні пошукового запиту №2
+FAKE_SEARCH_STRING = "фейкова назва"  # хибна назва населеного пункту для перевірки випадку коли пошуковий запит не дасть результату
+CITY_TEST_DATA = [
+    {"id": 6633, "city_name": "село Гудове", "community_id": 4579},
+    {"id": 6634, "city_name": "село Ємадикине", "community_id": 4579},
+    {"id": 6635, "city_name": "село Сваркове", "community_id": 4579},
+    {"id": 6636, "city_name": "село Соснівка", "community_id": 4579},
+    {"id": 6637, "city_name": "село Старикове", "community_id": 4579},
+    {"id": 6638, "city_name": "село Черневе", "community_id": 4579},
+    {"id": 6639, "city_name": "село Вовківка", "community_id": 4579},
+    {"id": 6640, "city_name": "село Катеринівка", "community_id": 4579},
+    {"id": 6641, "city_name": "село Ходине", "community_id": 4579},
+    {"id": 6642, "city_name": "селище Шалигине", "community_id": 4579},
+]
