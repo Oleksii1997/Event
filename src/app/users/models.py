@@ -34,4 +34,4 @@ class UserModel(Base):
     created_at: Mapped[Optional[created_at]]
     updated_at: Mapped[Optional[updated_at]]
 
-    profile: Mapped["ProfileModel"] = relationship(back_populates="user")
+    user_profile: Mapped["ProfileModel"] = relationship(back_populates="profile_user")
