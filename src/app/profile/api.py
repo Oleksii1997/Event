@@ -28,19 +28,22 @@ profile_router = APIRouter(
 )
 
 
-@profile_router.post("/create", response_model=ProfileReplayBase)
+@profile_router.post("/create", response_model=ProfileReplayFullBase)
 async def create_profile(
     data: ProfileBase,
     user: UserBase = Depends(get_current_active_auth_user_from_access),
     session: AsyncSession = Depends(get_session),
-) -> ProfileReplayBase | HTTPException:
+) -> ProfileReplayFullBase | HTTPException:
     """Створюємо профіль користувача"""
     profile = await ProfileService.get_profile_by_user(session=session, user=user)
     if profile is not None:
         raise HTTPException(status_code=400, detail="Profile already exist")
     else:
-        return await ProfileService.create_profile(
+        new_short_profile = await ProfileService.create_profile(
             session=session, user=user, data=data
+        )
+        return await ProfileService.get_profile_by_user_id(
+            user_id=new_short_profile.profile_user.id, session=session
         )
 
 
@@ -56,14 +59,17 @@ async def delete_profile(
         return result
 
 
-@profile_router.patch("/update", response_model=ProfileReplayBase)
+@profile_router.patch("/update", response_model=ProfileReplayFullBase)
 async def update_profile(
     data: ProfileBase,
     user: UserBase = Depends(get_current_active_auth_user_from_access),
     session: AsyncSession = Depends(get_session),
-) -> ProfileReplayBase | HTTPException:
+) -> ProfileReplayFullBase | HTTPException:
     """Оновлюємо дані профілю користувача"""
-    return await ProfileService.update_profile(data=data, session=session, user=user)
+    profile = await ProfileService.update_profile(data=data, session=session, user=user)
+    return await ProfileService.get_profile_by_user_id(
+        user_id=profile.profile_user.id, session=session
+    )
 
 
 @profile_router.get("/get_detail/{user_id}", response_model=ProfileReplayFullBase)
