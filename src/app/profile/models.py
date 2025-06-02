@@ -1,4 +1,5 @@
 import datetime
+from sqlalchemy import UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey
 from uuid import UUID, uuid4
@@ -25,15 +26,17 @@ class ProfileModel(Base):
     user_id: Mapped[UUID] = mapped_column(
         ForeignKey("user_table.id", ondelete="CASCADE")
     )
-    user: Mapped["UserModel"] = relationship(back_populates="profile")
-    avatar: Mapped[List["AvatarModel"]] = relationship(back_populates="profile_avatar")
-    video_profile: Mapped["VideoProfileModel"] = relationship(
-        back_populates="profile_video"
+    profile_user: Mapped["UserModel"] = relationship(back_populates="user_profile")
+    profile_avatar: Mapped[list["AvatarModel"]] = relationship(
+        back_populates="avatar_profile"
+    )
+    profile_video: Mapped["VideoProfileModel"] = relationship(
+        back_populates="video_profile"
     )
     birthday: Mapped[datetime.datetime] = mapped_column(nullable=True)
     description: Mapped[Optional[str_1024]] = mapped_column(nullable=True)
-    social_link: Mapped["SocialLinkModel"] = relationship(
-        back_populates="profile_social"
+    profile_social_link: Mapped[list["SocialLinkModel"]] = relationship(
+        back_populates="social_link_profile"
     )
 
     area: Mapped[int] = mapped_column(ForeignKey("area_table.id", ondelete="CASCADE"))
@@ -59,6 +62,8 @@ class ProfileModel(Base):
     created_at: Mapped[Optional[created_at]]
     updated_at: Mapped[Optional[updated_at]]
 
+    __table_args__ = (UniqueConstraint("user_id"),)
+
 
 class AvatarModel(Base):
     """Модель зображення профелю"""
@@ -72,7 +77,9 @@ class AvatarModel(Base):
     created_at: Mapped[Optional[created_at]]
     updated_at: Mapped[Optional[updated_at]]
 
-    profile_avatar: Mapped["ProfileModel"] = relationship(back_populates="avatar")
+    avatar_profile: Mapped["ProfileModel"] = relationship(
+        back_populates="profile_avatar"
+    )
 
 
 class VideoProfileModel(Base):
@@ -88,7 +95,7 @@ class VideoProfileModel(Base):
 
     updated_at: Mapped[Optional[updated_at]]
 
-    profile_video: Mapped["ProfileModel"] = relationship(back_populates="video_profile")
+    video_profile: Mapped["ProfileModel"] = relationship(back_populates="profile_video")
 
 
 class SocialLinkModel(Base):
@@ -100,4 +107,6 @@ class SocialLinkModel(Base):
     profile_id: Mapped[UUID] = mapped_column(
         ForeignKey("profile_table.id", ondelete="CASCADE")
     )
-    profile_social: Mapped[ProfileModel] = relationship(back_populates="social_link")
+    social_link_profile: Mapped[ProfileModel] = relationship(
+        back_populates="profile_social_link"
+    )

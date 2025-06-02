@@ -13,10 +13,12 @@ class AreaModel(Base):
     __tablename__ = "area_table"
     id: Mapped[int] = mapped_column(primary_key=True)
     area_name: Mapped[Optional[str_32]] = mapped_column(nullable=True)
-    area_region: Mapped[List["RegionModel"]] = relationship(
+    area_region: Mapped[list["RegionModel"]] = relationship(
         back_populates="region_area"
     )
-    area_profile: Mapped["ProfileModel"] = relationship(back_populates="profile_area")
+    area_profile: Mapped[list["ProfileModel"]] = relationship(
+        back_populates="profile_area"
+    )
 
 
 class RegionModel(Base):
@@ -29,10 +31,10 @@ class RegionModel(Base):
         ForeignKey("area_table.id", ondelete="CASCADE")
     )
     region_area: Mapped["AreaModel"] = relationship(back_populates="area_region")
-    region_community: Mapped[List["CommunityModel"]] = relationship(
+    region_community: Mapped[list["CommunityModel"]] = relationship(
         back_populates="community_region"
     )
-    region_profile: Mapped["ProfileModel"] = relationship(
+    region_profile: Mapped[list["ProfileModel"]] = relationship(
         back_populates="profile_region"
     )
 
@@ -49,10 +51,10 @@ class CommunityModel(Base):
     community_region: Mapped["RegionModel"] = relationship(
         back_populates="region_community"
     )
-    community_city: Mapped[List["CityModel"]] = relationship(
+    community_city: Mapped[list["CityModel"]] = relationship(
         back_populates="city_community"
     )
-    community_profile: Mapped["ProfileModel"] = relationship(
+    community_profile: Mapped[list["ProfileModel"]] = relationship(
         back_populates="profile_community"
     )
 
@@ -69,6 +71,8 @@ class CityModel(Base):
     city_community: Mapped["CommunityModel"] = relationship(
         back_populates="community_city"
     )
-    city_profile: Mapped["ProfileModel"] = relationship(back_populates="profile_city")
+    city_profile: Mapped[list["ProfileModel"]] = relationship(
+        back_populates="profile_city"
+    )
 
     __table_args__ = (Index("city_name_index", "city_name"),)
