@@ -15,8 +15,11 @@ from src.app.profile.schemas import (
     ProfileBase,
     ProfileReplayBase,
     ProfileReplayFullBase,
+    ProfileSocialLinkCreateBase,
+    ProfileSocialLincCreateReturnBase,
 )
 from src.app.profile.servise.profile_service import ProfileService
+from src.app.profile.servise.social_link_service import SocialLinkService
 
 
 http_bearer = HTTPBearer(auto_error=False)
@@ -84,3 +87,21 @@ async def get_detail_profile(
         raise HTTPException(status_code=400, detail="Profile does not exist")
     else:
         return result
+
+
+@profile_router.post(
+    "/social_link/add", response_model=ProfileSocialLincCreateReturnBase
+)
+async def create_social_link(
+    data: list[ProfileSocialLinkCreateBase],
+    user: UserBase = Depends(get_current_active_auth_user_from_access),
+    session: AsyncSession = Depends(get_session),
+) -> ProfileSocialLincCreateReturnBase:
+    new_link = await SocialLinkService.create_social_link(data, user, session)
+    if new_link is None:
+        raise HTTPException(
+            status_code=400,
+            detail="Profile does not exist. Creat your profile and edit",
+        )
+    else:
+        return new_link

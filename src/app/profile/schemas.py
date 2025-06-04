@@ -2,6 +2,7 @@ import datetime
 from pytz import timezone
 from uuid import UUID, uuid4
 from pydantic import BaseModel, Field, field_validator
+from enum import Enum
 
 from src.app.users.schemas import UserBase
 from src.app.location.schemas import AreaBase, RegionBase, CommunityBase, CityBase
@@ -63,3 +64,31 @@ class ProfileReplayFullBase(BaseModel, ValidateBirthday):
     profile_city: CityBase
     created_at: datetime.datetime
     updated_at: datetime.datetime
+
+
+class SocialLinkTypeEnum(str, Enum):
+    facebook = "Facebook"
+    instagram = "Instagram"
+    linkedin = "Linkedin"
+    twitter = "Twitter"
+    youtube = "YouTube"
+    tiktok = "TikTok"
+    whatsapp = "WhatsApp"
+    telegram = "Telegram"
+    viber = "Viber"
+    signal = "Signal"
+    pinterest = "Pinterest"
+    reddit = "Reddit"
+    website = "Website"
+
+
+class ProfileSocialLinkCreateBase(BaseModel):
+    """Модель посилань на соцмережі, при створенні"""
+
+    link_type: SocialLinkTypeEnum
+    link: str
+
+
+class ProfileSocialLincCreateReturnBase(BaseModel):
+    profile_id: UUID = Field(default_factory=uuid4)
+    social_link: list[ProfileSocialLinkCreateBase]

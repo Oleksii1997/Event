@@ -1,13 +1,15 @@
 import datetime
-from sqlalchemy import UniqueConstraint
+from sqlalchemy import UniqueConstraint, Column
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey
 from uuid import UUID, uuid4
-from typing import List, Optional
+from typing import List, Optional, Literal, get_args
+from sqlalchemy import Enum
 
 # from src.app.location.models import CommunityModel
 from src.config.models import (
     Base,
+    str_128,
     str_256,
     str_1024,
     created_at,
@@ -98,12 +100,37 @@ class VideoProfileModel(Base):
     video_profile: Mapped["ProfileModel"] = relationship(back_populates="profile_video")
 
 
+TypeSocialLinkEnum = Literal[
+    "Facebook",
+    "Instagram",
+    "Linkedin",
+    "Twitter",
+    "YouTube",
+    "TikTok",
+    "WhatsApp",
+    "Telegram",
+    "Viber",
+    "Signal",
+    "Pinterest",
+    "Reddit",
+    "Website",
+]
+
+
 class SocialLinkModel(Base):
     """Модель посилань на соціальні мережі"""
 
     __tablename__ = "social_link_table"
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
-    link: Mapped[Optional[str_256]] = mapped_column(nullable=False)
+    link_type: Mapped[TypeSocialLinkEnum] = mapped_column(
+        Enum(
+            *get_args(TypeSocialLinkEnum),
+            name="link_type",
+            create_constraint=True,
+            validate_strings=True
+        ),
+    )
+    link: Mapped[Optional[str_256]] = mapped_column(nullable=False, unique=True)
     profile_id: Mapped[UUID] = mapped_column(
         ForeignKey("profile_table.id", ondelete="CASCADE")
     )
