@@ -1,6 +1,7 @@
 import pytest
 import json
 
+from main import app
 from src.test_app.db.data_for_test import (
     AREA_TEST_DATA,
     REGION_TEST_DATA,
@@ -31,6 +32,8 @@ async def test_all_area(client, override_session):
     for item in resp:
         assert True if item in AREA_TEST_DATA else False
 
+    app.dependency_overrides.clear()
+
 
 @pytest.mark.asyncio
 async def test_regions_in_area(client, override_session):
@@ -51,6 +54,8 @@ async def test_regions_in_area(client, override_session):
     assert response.status_code == 200
     assert 0 == len(response.json())
 
+    app.dependency_overrides.clear()
+
 
 @pytest.mark.asyncio
 async def test_community_in_region(client, override_session):
@@ -68,6 +73,8 @@ async def test_community_in_region(client, override_session):
     assert response.status_code == 200
     assert 0 == len(response.json())
 
+    app.dependency_overrides.clear()
+
 
 @pytest.mark.asyncio
 async def test_city_in_community(client, override_session):
@@ -84,6 +91,8 @@ async def test_city_in_community(client, override_session):
     )
     assert response.status_code == 200
     assert 0 == len(response.json())
+
+    app.dependency_overrides.clear()
 
 
 @pytest.mark.asyncio
@@ -111,3 +120,5 @@ async def test_city_search(client, override_session):
     response = await client.get(f"/api/v1/location/city/search/{FAKE_SEARCH_STRING}")
     assert response.status_code == 200
     assert 0 == len(response.json())
+
+    app.dependency_overrides.clear()

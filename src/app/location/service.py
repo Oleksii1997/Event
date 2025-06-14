@@ -72,11 +72,16 @@ class CityLocationService:
     """Клас для роботи з об'єктами локації (населені пункти)"""
 
     def __init__(
-        self, session: AsyncSession, community_id: int = None, search_field: str = None
-    ):
+        self,
+        session: AsyncSession,
+        community_id: int = None,
+        search_field: str = None,
+        city_id: int = None,
+    ) -> None:
         self.session = session
         self.community_id = community_id
         self.search_field = search_field
+        self.city_id = city_id
 
     async def get_city_in_community(self) -> list[CityBase]:
         """Отримуємо список населених пунктів певної громади"""
@@ -113,3 +118,24 @@ class CityLocationService:
             for item in city
         ]
         return all_city_full
+
+    async def get_info_by_city_id(self) -> CityCommunityRegionAreaBase | None:
+        """Отримуємо вкладену модель, інформації про населений пункт. З ID населеного пункту отримуємо
+        область, район та громаду до яких відноситься даний населений пункт"""
+        query = (
+            select(CityModel)
+            .join(CommunityModel)
+            .join(RegionModel)
+            .join(AreaModel)
+            .options(
+                contains_eager(CityModel.city_community)
+                .contains_eager(CommunityModel.community_region)
+                .contains_eager(RegionModel.region_area)
+            )
+            .where(CityModel.id == self.city_id)
+        )
+        result = await self.session.execute(query)
+        city = result.unique().scalars().one_or_none()
+        if city is None:
+            return None
+        return CityCommunityRegionAreaBase.model_validate(city, from_attributes=True)

@@ -26,6 +26,20 @@ TEST_USER_MODEL_DB = {
     "is_superuser": False,
 }
 
+"""Користувач для тестування профілю користувача"""
+TEST_USER_FOR_PROFILE_DB = {
+    "user_id": "a192bcfe-0b91-437c-a365-6b3134f65387",
+    "firstname": "TestFirstname_profile",
+    "lastname": "TestLastname_profile",
+    "phone_number": "0998567683",
+    "email": "rvk10discord@gmail.com",
+    "password": "Oleksii@WM4635AA",
+    "is_active": True,
+    "valid_email": True,
+    "is_staff": False,
+    "is_superuser": False,
+}
+
 TEST_ME_UPDATE = {
     "firstname": "Firstname_update",
     "lastname": "Lastname_update",
@@ -180,3 +194,68 @@ CITY_TEST_DATA = [
     {"id": 6641, "city_name": "село Ходине", "community_id": 4579},
     {"id": 6642, "city_name": "селище Шалигине", "community_id": 4579},
 ]
+
+TEST_CREATE_SOCIAL_LINK = {"link_type": "Facebook", "link": "facebook test link"}
+INVALID_TEST_CREATE_SOCIAL_LINK = {
+    "link_type": "Fake type",
+    "link": "facebook test link fake",
+}
+
+CREATE_PROFILE_DATA_API = {
+    "birthday": "2025-05-31",
+    "description": "Опис про себе, тестовий запис",
+    "area": 18,
+    "region": 1392,
+    "community": 4579,
+    "city": 6638,
+}
+CREATE_PROFILE_DATA_DB = {
+    "id": "bcf08e76-4dbe-4dcb-9351-4192b02ee2af",
+    "birthday": "2019-05-31",
+    "description": "Опис про себе, тестовий запис, База Даних",
+    "area": 18,
+    "region": 1392,
+    "community": 4579,
+    "city": 6639,
+}
+PROFILE_UPDATE_DB = {
+    "birthday": "1987-04-17",
+    "description": "Оновлені дані профілю",
+    "area": 18,
+    "region": 1392,
+    "community": 4579,
+    "city": 6639,
+}
+PROFILE_FUTURE_BIRTHDAY = {
+    "birthday": "2126-05-31",
+    "description": "Опис про себе, тестовий запис",
+    "area": 18,
+    "region": 1392,
+    "community": 4579,
+    "city": 6638,
+}
+PROFILE_OLD_BIRTHDAY = {
+    "birthday": "2126-05-31",
+    "description": "Опис про себе, тестовий запис",
+    "area": 18,
+    "region": 1392,
+    "community": 4579,
+    "city": 6638,
+}
+PROFILE_CITY_DOSE_NOT_EXIST = {
+    "birthday": "2019-05-31",
+    "description": "Опис про себе, тестовий запис",
+    "area": 18,
+    "region": 1392,
+    "community": 4579,
+    "city": 6638000,
+}
+PROFILE_FAKE_LOCATION = {
+    "birthday": "2019-05-31",
+    "description": "Опис про себе, тестовий запис",
+    "area": 18,
+    "region": 13920000,
+    "community": 4579,
+    "city": 6638,
+}
+FAKE_PROFILE_UUID = "3fa85f64-5717-4562-b3fc-2c963f66afa6"
