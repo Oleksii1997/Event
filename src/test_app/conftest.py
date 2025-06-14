@@ -14,7 +14,8 @@ from src.test_app.db.db_test_config import SettingsTest
 
 @pytest_asyncio.fixture(scope="function")
 async def override_session():
-    """Створюємо сесію для тестів, використовуємо тестову базу даних"""
+    """Створюємо сесію для тестів, використовуємо тестову базу даних,
+    також наповнюємо БД необхідними тестовими даними"""
     settings_test = SettingsTest()
     async_engine_test = create_async_engine(
         url=settings_test.database_test_url_asyncpg,

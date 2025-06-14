@@ -30,7 +30,7 @@ class AuthJWT(BaseModel):
         "src/app/certs/recovery-password-jwt-public.pem"
     )
     algorithm: str = "RS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 20
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 90
     REFRESH_TOKEN_EXPIRE_MINUTES: int = 1440
     RECOVERY_PASSWORD_TOKEN_EXPIRE_MINUTES: int = 60
 

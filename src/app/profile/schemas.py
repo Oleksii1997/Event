@@ -31,6 +31,12 @@ class ValidateBirthday:
         return birthday
 
 
+class ProfileUUIDBase(BaseModel):
+    """Модель UUID"""
+
+    id: UUID = Field(default_factory=uuid4)
+
+
 class ProfileBase(BaseModel, ValidateBirthday):
     """Модель створення профілю користувача"""
 
@@ -92,3 +98,18 @@ class ProfileSocialLinkCreateBase(BaseModel):
 class ProfileSocialLincCreateReturnBase(BaseModel):
     profile_id: UUID = Field(default_factory=uuid4)
     social_link: list[ProfileSocialLinkCreateBase]
+
+
+class ProfileSocialLinkBase(BaseModel):
+    """Модель соціальних мереж"""
+
+    id: UUID = Field(default_factory=uuid4)
+    link_type: SocialLinkTypeEnum
+    link: str
+    profile_id: UUID = Field(default_factory=uuid4)
+
+
+class ProfileWithSocialLinkBase(ProfileReplayBase):
+    """Профіль з посиланнями на соціальні мережі"""
+
+    profile_social_link: list[ProfileSocialLinkBase]

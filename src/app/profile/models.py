@@ -38,7 +38,9 @@ class ProfileModel(Base):
     birthday: Mapped[datetime.datetime] = mapped_column(nullable=True)
     description: Mapped[Optional[str_1024]] = mapped_column(nullable=True)
     profile_social_link: Mapped[list["SocialLinkModel"]] = relationship(
-        back_populates="social_link_profile"
+        back_populates="social_link_profile",
+        cascade="all, delete",
+        passive_deletes=True,
     )
 
     area: Mapped[int] = mapped_column(ForeignKey("area_table.id", ondelete="CASCADE"))
