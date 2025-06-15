@@ -196,6 +196,11 @@ CITY_TEST_DATA = [
 ]
 
 TEST_CREATE_SOCIAL_LINK = {"link_type": "Facebook", "link": "facebook test link"}
+TEST_CREATE_SOCIAL_LINK_DB = {
+    "id": "cba0bfd5-9caf-4356-a5e8-99848e821c3e",
+    "link_type": "Telegram",
+    "link": "Link by telegram",
+}
 INVALID_TEST_CREATE_SOCIAL_LINK = {
     "link_type": "Fake type",
     "link": "facebook test link fake",
