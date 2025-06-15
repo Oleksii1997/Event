@@ -1,17 +1,14 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete
-from wtforms.validators import Optional
 
 from src.app.profile.schemas import (
     ProfileSocialLinkCreateBase,
-    ProfileSocialLincCreateReturnBase,
     ProfileUUIDBase,
-    SocialLinkTypeEnum,
 )
 from src.app.auth.schemas import MsgBase
 from src.app.users.schemas import UserBase
 from src.app.profile.schemas import ProfileSocialLinkBase
-from src.app.profile.models import ProfileModel, SocialLinkModel
+from src.app.profile.models import SocialLinkModel
 from src.app.profile.servise.profile_service import ProfileService
 from uuid import UUID
 
@@ -45,7 +42,7 @@ class SocialLinkService:
         cls,
         link_id: UUID,
         session: AsyncSession,
-    ) -> ProfileSocialLinkBase:
+    ) -> ProfileSocialLinkBase | None:
         """Видаляємо посилання на соцмережу в профілі користувача"""
         query = (
             delete(SocialLinkModel)
@@ -54,7 +51,9 @@ class SocialLinkService:
         )
         result = await session.execute(query)
         await session.commit()
-        link = result.scalars().one()
+        link = result.scalars().one_or_none()
+        if link is None:
+            return None
         return ProfileSocialLinkBase.model_validate(link, from_attributes=True)
 
     @classmethod

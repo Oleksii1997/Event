@@ -18,7 +18,6 @@ from src.test_app.db.data_for_test import (
     PROFILE_FAKE_LOCATION,
 )
 from src.app.auth.jwt import create_jwt_token
-from src.test_app.test_api.test_auth import test_registration_user
 
 
 @pytest.mark.asyncio
@@ -160,3 +159,33 @@ async def test_update_profile_fake_location(client, override_session):
     )
     assert response.status_code == 400
     assert response.json()["detail"] == "Location data is invalid"
+
+    app.dependency_overrides.clear()
+
+
+@pytest.mark.asyncio
+async def test_delete_profile(client, override_session):
+    """Тестуємо видалення профілю"""
+    access_token = await create_jwt_token(
+        payload={"user_id": TEST_USER_FOR_PROFILE_DB["user_id"]},
+        private_key_path=JWT_TEST_DATA["private_key_access_jwt_path"],
+        expire_minutes=JWT_TEST_DATA["ACCESS_TOKEN_EXPIRE_MINUTES"],
+        algorithm=JWT_TEST_DATA["algorithm"],
+    )
+    response = await client.request(
+        "DELETE",
+        "/api/v1/profile/delete",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+    assert response.status_code == 200
+    assert response.json()["msg"] == "User profile success deleted"
+
+    response_profile_not_exist = await client.request(
+        "DELETE",
+        "/api/v1/profile/delete",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+    assert response_profile_not_exist.status_code == 400
+    assert response_profile_not_exist.json()["detail"] == "Profile does not exist"
+
+    app.dependency_overrides.clear()

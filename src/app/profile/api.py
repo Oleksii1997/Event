@@ -14,10 +14,8 @@ from src.app.auth.schemas import MsgBase
 from src.config.db_settings import get_session
 from src.app.profile.schemas import (
     ProfileBase,
-    ProfileReplayBase,
     ProfileReplayFullBase,
     ProfileSocialLinkCreateBase,
-    ProfileSocialLincCreateReturnBase,
     ProfileSocialLinkBase,
     ProfileUUIDBase,
 )
@@ -143,4 +141,11 @@ async def delete_social_link(
     user: UserBase = Depends(get_current_active_auth_user_from_access),
 ) -> ProfileSocialLinkBase:
     """Видаляємо модель та повертаємо видалене значення"""
-    return await SocialLinkService.delete_social_link(link_id, session)
+    result = await SocialLinkService.delete_social_link(link_id, session)
+    if result is None:
+        raise HTTPException(
+            status_code=400,
+            detail="Social link does not exist",
+        )
+    else:
+        return result
