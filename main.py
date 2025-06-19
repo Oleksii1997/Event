@@ -9,8 +9,15 @@ from src.app.users.models import UserModel
 
 from src.app.location.models import CityModel, RegionModel, AreaModel
 from src.config.db_settings import async_engine, new_session
-from src.app.users.admin import UserModelAdmin, ProfileModelAdmin
+from src.app.users.admin import UserModelAdmin
+from src.app.profile.admin import ProfileModelAdmin, SocialLinkModelAdmin
 from src.app.auth.admin import VerificationModelAdmin
+from src.app.location.admin import (
+    AreaModelAdmin,
+    RegionModelAdmin,
+    CommunityModelAdmin,
+    CityModelAdmin,
+)
 
 """
 @asynccontextmanager
@@ -36,5 +43,10 @@ admin = Admin(app, async_engine)
 admin.add_view(UserModelAdmin)
 admin.add_view(ProfileModelAdmin)
 admin.add_view(VerificationModelAdmin)
+admin.add_view(AreaModelAdmin)
+admin.add_view(RegionModelAdmin)
+admin.add_view(CommunityModelAdmin)
+admin.add_view(CityModelAdmin)
+admin.add_view(SocialLinkModelAdmin)
 
 app.include_router(routers.api_router, prefix=settings.settings_class.api_v1_prefix)

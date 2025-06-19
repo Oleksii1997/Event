@@ -1,6 +1,5 @@
 from sqladmin import ModelView
-from src.app.users.models import UserModel, ProfileModel
-from src.app.auth.models import VerificationModel
+from src.app.users.models import UserModel
 
 
 class UserModelAdmin(ModelView, model=UserModel):
@@ -41,23 +40,3 @@ class UserModelAdmin(ModelView, model=UserModel):
         UserModel.password,
     ]
     form_edit_rules = ["valid_email", "is_active", "is_staff", "is_superuser"]
-
-
-class ProfileModelAdmin(ModelView, model=ProfileModel):
-
-    name = "Profile"
-    name_plural = "Profiles"
-    icon = "fas fa-user-circle"
-    category = "Accounts"
-    column_list = [ProfileModel.id, ProfileModel.birthday]
-    column_searchable_list = [
-        ProfileModel.user_id,
-    ]
-    column_labels = {
-        ProfileModel.id: "UUID",
-        ProfileModel.birthday: "Birthday",
-        ProfileModel.user_id: "User",
-        ProfileModel.created_at: "Created",
-        ProfileModel.updated_at: "Updated",
-    }
-    column_export_list = "__all__"
