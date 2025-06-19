@@ -32,4 +32,4 @@ class Base(AsyncAttrs, DeclarativeBase):
         cols = []
         for col in self.__table__.columns.keys():
             cols.append(f"{col}={getattr(self, col)}")
-        return f"<{self.__class__.__name__} {','.join(cols)}>"
+        return f"<{self.__class__.__name__} {', '.join(cols)}>"
