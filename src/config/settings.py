@@ -14,6 +14,7 @@ PROJECT_NAME = "SocialEvent"
 # base_url = "http://127.0.0.1:8000"
 # in docker
 base_url = "http://0.0.0.0:8000"
+BASE_URL = "http://127.0.0.1:8001/"
 
 
 class AuthJWT(BaseModel):
@@ -46,6 +47,10 @@ settings_class = Settings()
 
 """Email"""
 EMAIL_TEMPLATE_PATH = "src/email_template"
+MEDIA_PATH = "media"
+MEDIA_PATH_AVATAR = "media/image/avatar"
+
+MAX_AVATAR_SIZE_BITE = 200000
 
 EMAILS_FROM_NAME = PROJECT_NAME
 

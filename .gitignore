@@ -20,3 +20,5 @@ __pycache__/
 
 !src/db/migrations/.gitkeep
 src/app/certs/
+src/media/image/avater/*
+src/media/video

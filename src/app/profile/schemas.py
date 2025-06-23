@@ -113,3 +113,19 @@ class ProfileWithSocialLinkBase(ProfileReplayBase):
     """Профіль з посиланнями на соціальні мережі"""
 
     profile_social_link: list[ProfileSocialLinkBase]
+
+
+class AvatarBase(BaseModel):
+    """Модель аватарок"""
+
+    id: UUID = Field(default_factory=uuid4)
+    avatar_url: str
+    profile_id: UUID = Field(default_factory=uuid4)
+    created_at: datetime.datetime
+
+
+class CreateAvatar(BaseModel):
+    """Модель створення нового аватару"""
+
+    avatar_url: str
+    profile_id: UUID = Field(default_factory=uuid4)

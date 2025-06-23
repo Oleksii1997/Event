@@ -1,10 +1,11 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, UploadFile, File
 from fastapi.params import Depends
 from fastapi.security import HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import Annotated
+from typing import Annotated, List, Any, Coroutine
 from uuid import UUID
 
+from src.app.auth.api import http_bearer
 from src.app.users.service.jwt_user_service import (
     get_current_active_auth_user_from_access,
 )
@@ -21,6 +22,9 @@ from src.app.profile.schemas import (
 )
 from src.app.profile.servise.profile_service import ProfileService
 from src.app.profile.servise.social_link_service import SocialLinkService
+from src.app.profile.servise.image_service import seva_image_avatar
+from src.app.profile.servise.avatar_service import AvatarService
+from src.app.profile.schemas import AvatarBase, CreateAvatar
 
 
 http_bearer = HTTPBearer(auto_error=False)
@@ -34,6 +38,10 @@ social_link_router = APIRouter(
     prefix="/social_link",
     tags=["social_link"],
     dependencies=[Depends(http_bearer)],
+)
+
+avatar_router = APIRouter(
+    prefix="/avatar", tags=["user_avatar"], dependencies=[Depends(http_bearer)]
 )
 
 
@@ -149,3 +157,25 @@ async def delete_social_link(
         )
     else:
         return result
+
+
+@avatar_router.post("/create", response_model=list[AvatarBase])
+async def create_avatar(
+    file: UploadFile = File(...),
+    session: AsyncSession = Depends(get_session),
+    user: UserBase = Depends(get_current_active_auth_user_from_access),
+) -> list[AvatarBase]:
+    """API завантаження фото в профіль користувача.
+    З важливого слід відзначити, що я планую обмежити кількість фото які може завантажити один користувач.
+    Зараз один користувач зможе завантажити 3 фото та 1 відео, по розміру фото та відео визначимося
+    """
+    profile_id = await ProfileService.get_profile_id_by_user(user=user, session=session)
+    avatars = await AvatarService.get_all_avatar(profile_id.id, session)
+    if len(avatars) >= 3:
+        raise HTTPException(status_code=400, detail="You can add up to 3 photos.")
+    else:
+        avatar_url = await seva_image_avatar(file, user)
+        data = CreateAvatar(profile_id=profile_id.id, avatar_url=avatar_url)
+        new_avatar = await AvatarService.create_avatar(data=data, session=session)
+        avatars.append(new_avatar)
+    return avatars
