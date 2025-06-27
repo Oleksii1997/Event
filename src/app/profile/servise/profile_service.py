@@ -49,7 +49,7 @@ class ProfileService:
     @classmethod
     async def get_profile_id_by_user(
         cls, user: UserBase, session: AsyncSession
-    ) -> ProfileUUIDBase | None:
+    ) -> ProfileUUIDBase | HTTPException:
         """Отримуємо UUID користувача"""
         query = select(ProfileModel).where(ProfileModel.user_id == user.id)
         result = await session.execute(query)
@@ -58,7 +58,12 @@ class ProfileService:
             profile_id = ProfileUUIDBase.model_validate(
                 profile_id, from_attributes=True
             )
-        return profile_id
+            return profile_id
+        else:
+            raise HTTPException(
+                status_code=400,
+                detail="Profile does not exist. Create your profile and edit",
+            )
 
     @classmethod
     async def get_profile_by_user_id(

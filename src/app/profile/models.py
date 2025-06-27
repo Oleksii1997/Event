@@ -30,10 +30,12 @@ class ProfileModel(Base):
     )
     profile_user: Mapped["UserModel"] = relationship(back_populates="user_profile")
     profile_avatar: Mapped[list["AvatarModel"]] = relationship(
-        back_populates="avatar_profile"
+        back_populates="avatar_profile",
+        cascade="all, delete-orphan",
     )
     profile_video: Mapped["VideoProfileModel"] = relationship(
-        back_populates="video_profile"
+        back_populates="video_profile",
+        cascade="all, delete-orphan",
     )
     birthday: Mapped[datetime.datetime] = mapped_column(nullable=True)
     description: Mapped[Optional[str_1024]] = mapped_column(nullable=True)
