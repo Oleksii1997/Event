@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from typing import List, Optional
 
+from src.app.auth.schemas import MsgBase
 from src.app.profile.models import AvatarModel
 from src.app.profile.schemas import AvatarBase, CreateAvatar
 
@@ -16,7 +17,11 @@ class AvatarService:
         cls, profile_id: UUID, session: AsyncSession
     ) -> List[Optional[AvatarBase]]:
         """Отримуємо всі зображення аватарок користувача"""
-        query = select(AvatarModel).where(AvatarModel.profile_id == profile_id)
+        query = (
+            select(AvatarModel)
+            .where(AvatarModel.profile_id == profile_id)
+            .order_by(AvatarModel.created_at)
+        )
         result = await session.execute(query)
         avatars = result.scalars().all()
         if avatars:
@@ -37,3 +42,18 @@ class AvatarService:
         await session.commit()
         print(f"New AVATAR{new_avatar}")
         return AvatarBase(**new_avatar.__dict__)
+
+    @classmethod
+    async def delete_avatar(
+        cls, avatar_id: UUID, session: AsyncSession
+    ) -> AvatarBase | None:
+        """Видаляємо відповідний запис про аватар з бази даних"""
+        query = select(AvatarModel).where(AvatarModel.id == avatar_id)
+        result = await session.execute(query)
+        image = result.scalars().one_or_none()
+        if image is not None:
+            avatar = AvatarBase.model_validate(image, from_attributes=True)
+            await session.delete(image)
+            await session.commit()
+            return avatar
+        return None

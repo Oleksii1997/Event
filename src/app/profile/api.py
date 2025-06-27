@@ -22,7 +22,10 @@ from src.app.profile.schemas import (
 )
 from src.app.profile.servise.profile_service import ProfileService
 from src.app.profile.servise.social_link_service import SocialLinkService
-from src.app.profile.servise.image_service import seva_image_avatar
+from src.app.profile.servise.image_service import (
+    seva_image_avatar,
+    delete_avatar_from_directory,
+)
 from src.app.profile.servise.avatar_service import AvatarService
 from src.app.profile.schemas import AvatarBase, CreateAvatar
 
@@ -179,3 +182,31 @@ async def create_avatar(
         new_avatar = await AvatarService.create_avatar(data=data, session=session)
         avatars.append(new_avatar)
     return avatars
+
+
+@avatar_router.delete("/delete", response_model=MsgBase)
+async def delete_avatar(
+    avatar_id: UUID,
+    session: AsyncSession = Depends(get_session),
+    user: UserBase = Depends(get_current_active_auth_user_from_access),
+) -> MsgBase:
+    """Видаляємо відповідний запис про аватар з бази даних та зображення в директорії де воно зберігається"""
+    avatar_del = await AvatarService.delete_avatar(avatar_id, session)
+    if avatar_del is None:
+        raise HTTPException(
+            status_code=400,
+            detail="Avatar does not exist",
+        )
+    else:
+        await delete_avatar_from_directory(file_path=avatar_del.avatar_url)
+        return MsgBase(msg="Avatar is deleted")
+
+
+@avatar_router.get("/all", response_model=list[AvatarBase])
+async def get_avatar(
+    session: AsyncSession = Depends(get_session),
+    user: UserBase = Depends(get_current_active_auth_user_from_access),
+) -> list[AvatarBase] | HTTPException:
+    """Повертаємо список аватарів користувача"""
+    profile_id = await ProfileService.get_profile_id_by_user(user=user, session=session)
+    return await AvatarService.get_all_avatar(profile_id.id, session)

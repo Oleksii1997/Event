@@ -1,7 +1,10 @@
+import os
 import aiofiles
+import asyncio
 from uuid import uuid4
-from fastapi import UploadFile, HTTPException
+from fastapi import UploadFile, HTTPException, BackgroundTasks
 
+from src.app.profile.models import AvatarModel
 from src.config.settings import MEDIA_PATH_AVATAR, MAX_AVATAR_SIZE_BITE
 from src.app.users.schemas import UserBase
 
@@ -30,3 +33,12 @@ async def write_image(file_path: str, file: UploadFile):
     async with aiofiles.open(file_path, "wb") as buffer:
         data = await file.read()
         await buffer.write(data)
+
+
+async def delete_avatar_from_directory(file_path: str):
+    """Видаляємо зображення з директорії де воно зберігається"""
+    try:
+        if os.path.exists(file_path):
+            await asyncio.to_thread(os.remove, file_path)
+    except OSError:
+        print(f"ERROR deleted file {file_path}")

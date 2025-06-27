@@ -1,7 +1,6 @@
 from fastapi import FastAPI, Depends
 from contextlib import asynccontextmanager
 from sqladmin import Admin
-
 from src.app import routers
 from src.config import settings
 from src.config.make_db import create_tables, delete_tables
@@ -18,6 +17,7 @@ from src.app.location.admin import (
     CommunityModelAdmin,
     CityModelAdmin,
 )
+from src.app.profile.events import handlers  # реєструємо обробники подій, не видаляти
 
 """
 @asynccontextmanager
