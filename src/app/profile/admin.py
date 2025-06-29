@@ -1,7 +1,13 @@
+from markupsafe import Markup
 from sqladmin import ModelView
 
-from src.app.profile.models import SocialLinkModel
+from src.app.profile.models import SocialLinkModel, AvatarModel
 from src.app.users.models import ProfileModel
+from src.config.settings import base_url
+
+
+def format_image_url(model, attribute) -> Markup:
+    return Markup(f'<img src="{base_url}/{getattr(model, attribute)}" />')
 
 
 class ProfileModelAdmin(ModelView, model=ProfileModel):
@@ -68,4 +74,38 @@ class SocialLinkModelAdmin(ModelView, model=SocialLinkModel):
         SocialLinkModel.link_type,
         SocialLinkModel.link,
         SocialLinkModel.profile_id,
+    ]
+
+
+class AvatarModelAdmin(ModelView, model=AvatarModel):
+    """Опис моделі аватарок в адмінпанелі користувача"""
+
+    name = "Avatar"
+    name_plural = "Avatars"
+    icon = "fas fa-images"
+    category = "Accounts"
+    column_formatters = {
+        "avatar_url": format_image_url,
+    }
+    column_formatters_detail = {
+        "avatar_url": format_image_url,
+    }
+    column_list = [AvatarModel.id, AvatarModel.avatar_url, AvatarModel.profile_id]
+    column_labels = {
+        AvatarModel.id: "ID",
+        AvatarModel.avatar_url: "Avatar URL",
+        AvatarModel.profile_id: "Profile ID",
+        AvatarModel.avatar_profile: "User profile",
+        AvatarModel.created_at: "Created",
+    }
+    column_searchable_list = [
+        AvatarModel.id,
+        AvatarModel.profile_id,
+        AvatarModel.avatar_url,
+    ]
+    column_export_list = [
+        AvatarModel.id,
+        AvatarModel.avatar_url,
+        AvatarModel.profile_id,
+        AvatarModel.created_at,
     ]

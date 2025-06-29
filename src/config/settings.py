@@ -11,10 +11,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 PROJECT_NAME = "SocialEvent"
 # local
-# base_url = "http://127.0.0.1:8000"
+base_url = "http://127.0.0.1:8000"
 # in docker
-base_url = "http://0.0.0.0:8000"
-BASE_URL = "http://127.0.0.1:8001/"
+# base_url = "http://0.0.0.0:8000"
 
 
 class AuthJWT(BaseModel):
