@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Depends
+from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 from sqladmin import Admin
 from src.app import routers
@@ -9,7 +10,11 @@ from src.app.users.models import UserModel
 from src.app.location.models import CityModel, RegionModel, AreaModel
 from src.config.db_settings import async_engine, new_session
 from src.app.users.admin import UserModelAdmin
-from src.app.profile.admin import ProfileModelAdmin, SocialLinkModelAdmin
+from src.app.profile.admin import (
+    ProfileModelAdmin,
+    SocialLinkModelAdmin,
+    AvatarModelAdmin,
+)
 from src.app.auth.admin import VerificationModelAdmin
 from src.app.location.admin import (
     AreaModelAdmin,
@@ -38,10 +43,12 @@ app = FastAPI(
     version="0.0.1",
     #    lifespan=lifespan,
 )
+app.mount("/media", StaticFiles(directory="media"), name="media")
 
 admin = Admin(app, async_engine)
 admin.add_view(UserModelAdmin)
 admin.add_view(ProfileModelAdmin)
+admin.add_view(AvatarModelAdmin)
 admin.add_view(VerificationModelAdmin)
 admin.add_view(AreaModelAdmin)
 admin.add_view(RegionModelAdmin)
