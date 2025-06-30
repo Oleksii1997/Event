@@ -124,8 +124,24 @@ class AvatarBase(BaseModel):
     created_at: datetime.datetime
 
 
-class CreateAvatar(BaseModel):
+class CreateAvatarBase(BaseModel):
     """Модель створення нового аватару"""
 
     avatar_url: str
+    profile_id: UUID = Field(default_factory=uuid4)
+
+
+class VideoBase(BaseModel):
+    """Модель відео профілю"""
+
+    id: UUID = Field(default_factory=uuid4)
+    video_url: str
+    profile_id: UUID = Field(default_factory=uuid4)
+    # created_at: datetime.datetime
+
+
+class CreateVideoBase(BaseModel):
+    """Модель створення нового відео"""
+
+    video_url: str
     profile_id: UUID = Field(default_factory=uuid4)
