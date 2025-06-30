@@ -48,8 +48,10 @@ settings_class = Settings()
 EMAIL_TEMPLATE_PATH = "src/email_template"
 MEDIA_PATH = "media"
 MEDIA_PATH_AVATAR = "media/image/avatar"
+MEDIA_PATH_VIDEO = "media/video/profile"
 
 MAX_AVATAR_SIZE_BITE = 200000
+MAX_VIDEO_SIZE_BITE = 15000000
 
 EMAILS_FROM_NAME = PROJECT_NAME
 

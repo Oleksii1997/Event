@@ -6,7 +6,7 @@ from typing import List, Optional
 
 from src.app.auth.schemas import MsgBase
 from src.app.profile.models import AvatarModel
-from src.app.profile.schemas import AvatarBase, CreateAvatar
+from src.app.profile.schemas import AvatarBase, CreateAvatarBase
 
 
 class AvatarService:
@@ -34,7 +34,7 @@ class AvatarService:
 
     @classmethod
     async def create_avatar(
-        cls, data: CreateAvatar, session: AsyncSession
+        cls, data: CreateAvatarBase, session: AsyncSession
     ) -> AvatarBase:
         """Записуємо посилання на збережений аватар в базу даних"""
         new_avatar = AvatarModel(**data.model_dump())

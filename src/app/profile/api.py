@@ -19,6 +19,8 @@ from src.app.profile.schemas import (
     ProfileSocialLinkCreateBase,
     ProfileSocialLinkBase,
     ProfileUUIDBase,
+    VideoBase,
+    CreateVideoBase,
 )
 from src.app.profile.servise.profile_service import ProfileService
 from src.app.profile.servise.social_link_service import SocialLinkService
@@ -26,8 +28,13 @@ from src.app.profile.servise.image_service import (
     seva_image_avatar,
     delete_avatar_from_directory,
 )
+from src.app.profile.servise.video_service import (
+    seva_video_profile,
+    delete_video_from_directory,
+)
 from src.app.profile.servise.avatar_service import AvatarService
-from src.app.profile.schemas import AvatarBase, CreateAvatar
+from src.app.profile.servise.video_service import VideoProfileService
+from src.app.profile.schemas import AvatarBase, CreateAvatarBase
 
 
 http_bearer = HTTPBearer(auto_error=False)
@@ -45,6 +52,10 @@ social_link_router = APIRouter(
 
 avatar_router = APIRouter(
     prefix="/avatar", tags=["user_avatar"], dependencies=[Depends(http_bearer)]
+)
+
+video_router = APIRouter(
+    prefix="/video", tags=["video_profile"], dependencies=[Depends(http_bearer)]
 )
 
 
@@ -178,7 +189,7 @@ async def create_avatar(
         raise HTTPException(status_code=400, detail="You can add up to 3 photos.")
     else:
         avatar_url = await seva_image_avatar(file, user)
-        data = CreateAvatar(profile_id=profile_id.id, avatar_url=avatar_url)
+        data = CreateAvatarBase(profile_id=profile_id.id, avatar_url=avatar_url)
         new_avatar = await AvatarService.create_avatar(data=data, session=session)
         avatars.append(new_avatar)
     return avatars
@@ -190,7 +201,10 @@ async def delete_avatar(
     session: AsyncSession = Depends(get_session),
     user: UserBase = Depends(get_current_active_auth_user_from_access),
 ) -> MsgBase:
-    """Видаляємо відповідний запис про аватар з бази даних та зображення в директорії де воно зберігається"""
+    """Видаляємо відповідний запис про аватар з бази даних та зображення в директорії де воно зберігається.
+    При видаленні моделі AvatarModel спрацьовує хендлер який видаляє відео з директорії в якій він зберігається.
+    В майбутньому планується додавання сховища S3, відповідно логіка збереження та видалення буде змінена
+    """
     avatar_del = await AvatarService.delete_avatar(avatar_id, session)
     if avatar_del is None:
         raise HTTPException(
@@ -198,15 +212,65 @@ async def delete_avatar(
             detail="Avatar does not exist",
         )
     else:
-        await delete_avatar_from_directory(file_path=avatar_del.avatar_url)
         return MsgBase(msg="Avatar is deleted")
 
 
 @avatar_router.get("/all", response_model=list[AvatarBase])
 async def get_avatar(
+    profile_id: UUID,
     session: AsyncSession = Depends(get_session),
-    user: UserBase = Depends(get_current_active_auth_user_from_access),
 ) -> list[AvatarBase] | HTTPException:
     """Повертаємо список аватарів користувача"""
+    return await AvatarService.get_all_avatar(profile_id, session)
+
+
+@video_router.post("/create", response_model=list[VideoBase])
+async def create_video(
+    file: UploadFile = File(...),
+    session: AsyncSession = Depends(get_session),
+    user: UserBase = Depends(get_current_active_auth_user_from_access),
+) -> list[VideoBase]:
+    """API завантаження відео в профіль користувача.
+    Зараз встановили обмеження на кількість завантажених відео одним, в майюутньому можливо розширимо дану можливість.
+    Також встановлено обмеження на максимальний обсяг файлу відео 15 МВ"""
     profile_id = await ProfileService.get_profile_id_by_user(user=user, session=session)
-    return await AvatarService.get_all_avatar(profile_id.id, session)
+    video = await VideoProfileService.get_all_video(
+        profile_id=profile_id.id, session=session
+    )
+    if len(video) > 0:
+        raise HTTPException(status_code=400, detail="You can add up to one video.")
+    else:
+        video_url = await seva_video_profile(file, user)
+        data = CreateVideoBase(profile_id=profile_id.id, video_url=video_url)
+        new_video = await VideoProfileService.create_video(data=data, session=session)
+        video.append(new_video)
+    return video
+
+
+@video_router.delete("/delete", response_model=MsgBase)
+async def delete_video(
+    video_id: UUID,
+    session: AsyncSession = Depends(get_session),
+    user: UserBase = Depends(get_current_active_auth_user_from_access),
+) -> MsgBase:
+    """Видаляємо відповідний запис про відео профілю з бази даних та відео в директорії де воно зберігається.
+    При видаленні моделі VideoProfileModel спрацьовує хендлер який видаляє відео з директорії в якій він зберігається.
+    В майбутньому планується додавання сховища S3, відповідно логіка збереження та видалення буде змінена
+    """
+    video_del = await VideoProfileService.delete_video_profile(video_id, session)
+    if video_del is None:
+        raise HTTPException(
+            status_code=400,
+            detail="Video does not exist",
+        )
+    else:
+        return MsgBase(msg="Video is deleted")
+
+
+@video_router.get("/all", response_model=list[VideoBase])
+async def get_video(
+    profile_id: UUID,
+    session: AsyncSession = Depends(get_session),
+) -> list[VideoBase] | HTTPException:
+    """Повертаємо список відео користувача"""
+    return await VideoProfileService.get_all_video(profile_id, session)

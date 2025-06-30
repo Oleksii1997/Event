@@ -2,7 +2,7 @@ import os
 import aiofiles
 import asyncio
 from uuid import uuid4
-from fastapi import UploadFile, HTTPException, BackgroundTasks
+from fastapi import UploadFile, HTTPException
 
 from src.app.profile.models import AvatarModel
 from src.config.settings import MEDIA_PATH_AVATAR, MAX_AVATAR_SIZE_BITE
