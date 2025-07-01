@@ -14,6 +14,7 @@ from src.app.profile.admin import (
     ProfileModelAdmin,
     SocialLinkModelAdmin,
     AvatarModelAdmin,
+    VideoProfileModelAdmin,
 )
 from src.app.auth.admin import VerificationModelAdmin
 from src.app.location.admin import (
@@ -55,5 +56,6 @@ admin.add_view(RegionModelAdmin)
 admin.add_view(CommunityModelAdmin)
 admin.add_view(CityModelAdmin)
 admin.add_view(SocialLinkModelAdmin)
+admin.add_view(VideoProfileModelAdmin)
 
 app.include_router(routers.api_router, prefix=settings.settings_class.api_v1_prefix)

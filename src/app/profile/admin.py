@@ -1,13 +1,24 @@
 from markupsafe import Markup
 from sqladmin import ModelView
 
-from src.app.profile.models import SocialLinkModel, AvatarModel
+from src.app.profile.models import SocialLinkModel, AvatarModel, VideoProfileModel
 from src.app.users.models import ProfileModel
 from src.config.settings import base_url
 
 
 def format_image_url(model, attribute) -> Markup:
+    """Для відображення зображення"""
     return Markup(f'<img src="{base_url}/{getattr(model, attribute)}" />')
+
+
+def format_video_url(model, attribute) -> Markup:
+    """Для відображення відео"""
+    return Markup(
+        f'<video width="320" height="240" controls>'
+        f'<source src="{base_url}/{getattr(model, attribute)}" type="video/mp4">'
+        f"Your browser does not support the video tag."
+        f"</video>"
+    )
 
 
 class ProfileModelAdmin(ModelView, model=ProfileModel):
@@ -108,4 +119,42 @@ class AvatarModelAdmin(ModelView, model=AvatarModel):
         AvatarModel.avatar_url,
         AvatarModel.profile_id,
         AvatarModel.created_at,
+    ]
+
+
+class VideoProfileModelAdmin(ModelView, model=VideoProfileModel):
+    """Опис моделі відео профілю в адмінпанелі користувача"""
+
+    name = "Video"
+    name_plural = "Videos"
+    icon = "far fa-file-video"
+    category = "Accounts"
+    column_formatters = {
+        "video_url": format_video_url,
+    }
+    column_formatters_detail = {
+        "video_url": format_video_url,
+    }
+    column_list = [
+        VideoProfileModel.id,
+        VideoProfileModel.video_url,
+        VideoProfileModel.profile_id,
+    ]
+    column_labels = {
+        VideoProfileModel.id: "ID",
+        VideoProfileModel.video_url: "Avatar URL",
+        VideoProfileModel.profile_id: "Profile ID",
+        VideoProfileModel.video_profile: "User profile",
+        VideoProfileModel.created_at: "Created",
+    }
+    column_searchable_list = [
+        VideoProfileModel.id,
+        VideoProfileModel.profile_id,
+        VideoProfileModel.video_url,
+    ]
+    column_export_list = [
+        VideoProfileModel.id,
+        VideoProfileModel.video_url,
+        VideoProfileModel.profile_id,
+        VideoProfileModel.created_at,
     ]
