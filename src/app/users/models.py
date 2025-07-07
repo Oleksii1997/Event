@@ -1,7 +1,7 @@
 from sqlalchemy import text, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from uuid import UUID, uuid4
-from typing import Optional
+from typing import Optional, List
 
 from src.config.models import (
     Base,
@@ -14,6 +14,7 @@ from src.config.models import (
     updated_at,
 )
 from src.app.profile.models import ProfileModel
+from src.app.friendship.models import FriendshipModel, FriendshipRequestModel
 
 
 class UserModel(Base):
@@ -21,10 +22,12 @@ class UserModel(Base):
 
     __tablename__: str = "user_table"
 
-    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
+    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4, index=True)
     firstname: Mapped[Optional[str_48]] = mapped_column(nullable=False)
     lastname: Mapped[Optional[str_48]] = mapped_column(nullable=False)
-    phone_number: Mapped[Optional[str_16]] = mapped_column(nullable=False, unique=True)
+    phone_number: Mapped[Optional[str_16]] = mapped_column(
+        nullable=False, unique=True, index=True
+    )
     password: Mapped[Optional[bytes_256]] = mapped_column(nullable=False)
     email: Mapped[Optional[str_64]] = mapped_column(nullable=False, unique=True)
     valid_email: Mapped[bool] = mapped_column(default=False)
@@ -35,3 +38,24 @@ class UserModel(Base):
     updated_at: Mapped[Optional[updated_at]]
 
     user_profile: Mapped["ProfileModel"] = relationship(back_populates="profile_user")
+
+    user_friendship: Mapped["FriendshipModel"] = relationship(
+        "FriendshipModel",
+        foreign_keys="[FriendshipModel.user_id]",
+        back_populates="friendship_user",
+    )
+    friend_friendship: Mapped["FriendshipModel"] = relationship(
+        "FriendshipModel",
+        foreign_keys="[FriendshipModel.friend_id]",
+        back_populates="friendship_friend",
+    )
+    user_friendship_sender: Mapped[List["FriendshipRequestModel"]] = relationship(
+        "FriendshipRequestModel",
+        foreign_keys="[FriendshipRequestModel.sender_id]",
+        back_populates="friendship_sender_user",
+    )
+    user_friendship_receiver: Mapped[List["FriendshipRequestModel"]] = relationship(
+        "FriendshipRequestModel",
+        foreign_keys="[FriendshipRequestModel.receiver_id]",
+        back_populates="friendship_receiver_user",
+    )

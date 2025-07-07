@@ -137,6 +137,17 @@ class UserService:
         return user
 
     @classmethod
+    async def check_exist_user(cls, user_id: UUID, session: AsyncSession) -> bool:
+        """Перевіряє чи користувач із даним id існує"""
+        query = select(UserModel).where(UserModel.id == user_id)
+        result = await session.execute(query)
+        user = result.scalars().one_or_none()
+        if user is not None:
+            return True
+        else:
+            return False
+
+    @classmethod
     async def get_user_by_email(
         cls, email: str, session: AsyncSession
     ) -> UserBase | None:
