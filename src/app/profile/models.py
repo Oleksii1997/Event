@@ -24,7 +24,7 @@ class ProfileModel(Base):
 
     __tablename__ = "profile_table"
 
-    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
+    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4, index=True)
     user_id: Mapped[UUID] = mapped_column(
         ForeignKey("user_table.id", ondelete="CASCADE")
     )
@@ -81,7 +81,6 @@ class AvatarModel(Base):
         ForeignKey("profile_table.id", ondelete="CASCADE")
     )
     created_at: Mapped[Optional[created_at]]
-    updated_at: Mapped[Optional[updated_at]]
 
     avatar_profile: Mapped["ProfileModel"] = relationship(
         back_populates="profile_avatar"
@@ -98,8 +97,6 @@ class VideoProfileModel(Base):
         ForeignKey("profile_table.id", ondelete="CASCADE")
     )
     created_at: Mapped[Optional[created_at]]
-
-    updated_at: Mapped[Optional[updated_at]]
 
     video_profile: Mapped["ProfileModel"] = relationship(back_populates="profile_video")
 

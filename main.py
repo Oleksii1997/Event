@@ -23,6 +23,7 @@ from src.app.location.admin import (
     CommunityModelAdmin,
     CityModelAdmin,
 )
+from src.app.friendship.admin import FriendshipModelAdmin, FriendshipRequestModelAdmin
 from src.app.profile.events import handlers  # реєструємо обробники подій, не видаляти
 
 """
@@ -57,5 +58,7 @@ admin.add_view(CommunityModelAdmin)
 admin.add_view(CityModelAdmin)
 admin.add_view(SocialLinkModelAdmin)
 admin.add_view(VideoProfileModelAdmin)
+admin.add_view(FriendshipRequestModelAdmin)
+admin.add_view(FriendshipModelAdmin)
 
 app.include_router(routers.api_router, prefix=settings.settings_class.api_v1_prefix)

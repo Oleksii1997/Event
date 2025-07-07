@@ -19,6 +19,7 @@ from src.app.profile.models import (
     AvatarModel,
     SocialLinkModel,
 )  # noqa
+from src.app.friendship.models import FriendshipModel, FriendshipRequestModel  # noqa
 from src.app.users.models import UserModel, ProfileModel  # noqa
 from src.config.models import Base
 

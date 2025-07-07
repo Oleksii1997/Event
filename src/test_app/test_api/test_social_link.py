@@ -54,7 +54,7 @@ async def test_create_social_link_without_profile(client, override_session):
     assert response_without_profile.status_code == 400
     assert (
         response_without_profile.json()["detail"]
-        == "Profile does not exist. Creat your profile and edit"
+        == "Profile does not exist. Create your profile and edit"
     )
 
     response_invalid_data = await client.request(
@@ -158,7 +158,7 @@ async def test_get_social_link(client, override_session):
     assert response_without_profile.status_code == 400
     assert (
         response_without_profile.json()["detail"]
-        == "Profile does not exist. Creat your profile and edit"
+        == "Profile does not exist. Create your profile and edit"
     )
 
 
