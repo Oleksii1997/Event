@@ -23,18 +23,11 @@ class FriendshipRequestModel(Base):
     )
     created_at: Mapped[Optional[created_at]]
 
-    friendship_sender_user: Mapped["UserModel"] = relationship(
-        "UserModel", foreign_keys=[sender_id], back_populates="user_friendship_sender"
-    )
-    friendship_receiver_user: Mapped["UserModel"] = relationship(
-        "UserModel",
-        foreign_keys=[receiver_id],
-        back_populates="user_friendship_receiver",
-    )
-
 
 class FriendshipModel(Base):
-    """Модель друзів|підписників"""
+    """Модель друзів|підписників.
+    user_id - мій id;
+    friend_id - id на кого я підписаний"""
 
     __tablename__ = "friendship_table"
     __table_args__ = (UniqueConstraint("user_id", "friend_id", name="uq_user_friend"),)
@@ -47,10 +40,3 @@ class FriendshipModel(Base):
         ForeignKey("user_table.id"), nullable=False, index=True
     )
     created_at: Mapped[Optional[created_at]]
-
-    friendship_user: Mapped["UserModel"] = relationship(
-        "UserModel", foreign_keys=[user_id], back_populates="user_friendship"
-    )
-    friendship_friend: Mapped["UserModel"] = relationship(
-        "UserModel", foreign_keys=[friend_id], back_populates="friend_friendship"
-    )

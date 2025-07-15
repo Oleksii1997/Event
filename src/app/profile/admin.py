@@ -8,7 +8,9 @@ from src.config.settings import base_url
 
 def format_image_url(model, attribute) -> Markup:
     """Для відображення зображення"""
-    return Markup(f'<img src="{base_url}/{getattr(model, attribute)}" />')
+    return Markup(
+        f'<img src="{base_url}/{getattr(model, attribute)}" width="60" height="60"/>'
+    )
 
 
 def format_video_url(model, attribute) -> Markup:
