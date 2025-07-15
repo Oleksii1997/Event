@@ -3,7 +3,7 @@ from uuid import UUID
 
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, and_
+from sqlalchemy import select, and_, desc
 from src.app.friendship.schemas import (
     CreateFriendshipRequestBase,
     FriendshipRequestBase,
@@ -11,6 +11,14 @@ from src.app.friendship.schemas import (
     FriendshipBase,
 )
 from src.app.friendship.models import FriendshipRequestModel, FriendshipModel
+from src.app.friendship.schemas import (
+    MySubscribers,
+    ISubscribe,
+    FriendshipAvatarBase,
+    FriendshipVideoBase,
+)
+from src.app.profile.models import AvatarModel, VideoProfileModel
+from src.app.users.models import UserModel, ProfileModel
 
 
 class FriendRequestService:
@@ -84,3 +92,54 @@ class FriendRequestService:
         except IntegrityError:
             await session.rollback()
             return None
+
+
+class FriendInfoService:
+    """Клас для отримання інформації про підписки та підписників"""
+
+    @classmethod
+    async def get_my_subscribers(
+        cls, user_id: UUID, session: AsyncSession
+    ) -> list[MySubscribers]:
+        """Отримуємо своїх підписників (ті хто підписний на мене)"""
+        query = (
+            select(
+                UserModel.id,
+                UserModel.firstname,
+                UserModel.lastname,
+                AvatarModel,
+                VideoProfileModel,
+            )
+            .join(FriendshipModel, FriendshipModel.friend_id == UserModel.id)
+            .outerjoin(ProfileModel, ProfileModel.user_id == UserModel.id)
+            .outerjoin(AvatarModel, AvatarModel.profile_id == ProfileModel.id)
+            .outerjoin(
+                VideoProfileModel, VideoProfileModel.profile_id == ProfileModel.id
+            )
+            .where(FriendshipModel.user_id == user_id)
+            .order_by(desc(AvatarModel.created_at))
+        )
+        result = await session.execute(query)
+        data = result.all()
+
+        subscribers_dict = {}
+        for user_id, first_name, last_name, avatar, video in data:
+            if user_id not in subscribers_dict:
+                subscribers_dict[user_id] = MySubscribers(
+                    user_id=user_id,
+                    first_name=first_name,
+                    last_name=last_name,
+                    avatar=[],
+                    video=[],
+                )
+            if avatar:
+                new_avatar = FriendshipAvatarBase(avatar_url=avatar.avatar_url)
+                if new_avatar not in subscribers_dict[user_id].avatar:
+                    subscribers_dict[user_id].avatar.append(new_avatar)
+            if video:
+                new_video = FriendshipVideoBase(video_url=video.video_url)
+                if new_video not in subscribers_dict[user_id].video:
+                    subscribers_dict[user_id].video.append(new_video)
+
+        subscribers = list(subscribers_dict.values())
+        return subscribers

@@ -33,9 +33,8 @@ class ProfileModel(Base):
         back_populates="avatar_profile",
         cascade="all, delete-orphan",
     )
-    profile_video: Mapped["VideoProfileModel"] = relationship(
-        back_populates="video_profile",
-        cascade="all, delete-orphan",
+    profile_video: Mapped[Optional["VideoProfileModel"]] = relationship(
+        back_populates="video_profile", cascade="all, delete-orphan", uselist=False
     )
     birthday: Mapped[datetime.datetime] = mapped_column(nullable=True)
     description: Mapped[Optional[str_1024]] = mapped_column(nullable=True)
@@ -91,6 +90,8 @@ class VideoProfileModel(Base):
     """Модель відео для інформації про профіль"""
 
     __tablename__ = "video_profile_table"
+    __table_args__ = (UniqueConstraint("profile_id", name="uq_video_per_profile"),)
+
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     video_url: Mapped[Optional[str_256]] = mapped_column(nullable=False)
     profile_id: Mapped[UUID] = mapped_column(
@@ -131,7 +132,7 @@ class SocialLinkModel(Base):
             validate_strings=True
         ),
     )
-    link: Mapped[Optional[str_256]] = mapped_column(nullable=False, unique=True)
+    link: Mapped[Optional[str_256]] = mapped_column(nullable=False)
     profile_id: Mapped[UUID] = mapped_column(
         ForeignKey("profile_table.id", ondelete="CASCADE")
     )

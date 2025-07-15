@@ -12,12 +12,13 @@ from src.app.users.service.jwt_user_service import (
     get_current_active_auth_user_from_access,
 )
 from src.config.db_settings import get_session
-from src.app.friendship.service import FriendRequestService
+from src.app.friendship.service import FriendRequestService, FriendInfoService
 from src.app.friendship.schemas import (
     CreateFriendshipRequestBase,
     FriendshipRequestBase,
     FriendshipBase,
     CreateFriendshipBase,
+    MySubscribers,
 )
 
 http_bearer = HTTPBearer(auto_error=False)
@@ -89,6 +90,18 @@ async def accept_friend(
         raise HTTPException(
             status_code=400,
             detail=f"Користувача "
-            f"uuid = {data.user_id} вже підписаний на користувача uuid = {data.friend_id}.",
+            f"uuid = {data.sender_id} вже підписаний на користувача uuid = {data.receiver_id}.",
         )
     return result
+
+
+@friend_router.get("/my_subscribe", response_model=list[MySubscribers])
+async def all_my_subscribe(
+    user: UserBase = Depends(get_current_active_auth_user_from_access),
+    session: AsyncSession = Depends(get_session),
+):
+    """Функція повертає всіх моїх підписників"""
+    subscribers = await FriendInfoService.get_my_subscribers(
+        user_id=user.id, session=session
+    )
+    return subscribers

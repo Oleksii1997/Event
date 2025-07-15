@@ -38,24 +38,3 @@ class UserModel(Base):
     updated_at: Mapped[Optional[updated_at]]
 
     user_profile: Mapped["ProfileModel"] = relationship(back_populates="profile_user")
-
-    user_friendship: Mapped["FriendshipModel"] = relationship(
-        "FriendshipModel",
-        foreign_keys="[FriendshipModel.user_id]",
-        back_populates="friendship_user",
-    )
-    friend_friendship: Mapped["FriendshipModel"] = relationship(
-        "FriendshipModel",
-        foreign_keys="[FriendshipModel.friend_id]",
-        back_populates="friendship_friend",
-    )
-    user_friendship_sender: Mapped[List["FriendshipRequestModel"]] = relationship(
-        "FriendshipRequestModel",
-        foreign_keys="[FriendshipRequestModel.sender_id]",
-        back_populates="friendship_sender_user",
-    )
-    user_friendship_receiver: Mapped[List["FriendshipRequestModel"]] = relationship(
-        "FriendshipRequestModel",
-        foreign_keys="[FriendshipRequestModel.receiver_id]",
-        back_populates="friendship_receiver_user",
-    )
